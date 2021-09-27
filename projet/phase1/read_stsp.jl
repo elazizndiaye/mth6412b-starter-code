@@ -78,13 +78,13 @@ function n_nodes_to_read(format::String, n::Int, dim::Int)
   if format == "FULL_MATRIX"
     return dim
   elseif format in ["LOWER_DIAG_ROW", "UPPER_DIAG_COL"]
-    return n+1
+    return n + 1
   elseif format in ["LOWER_DIAG_COL", "UPPER_DIAG_ROW"]
-    return dim-n
+    return dim - n
   elseif format in ["LOWER_ROW", "UPPER_COL"]
     return n
   elseif format in ["LOWER_COL", "UPPER_ROW"]
-    return dim-n-1
+    return dim - n - 1
   else
     error("Unknown format - function n_nodes_to_read")
   end
@@ -120,7 +120,7 @@ function read_edges(header::Dict{String}{String}, filename::String)
         edge_weight_section = true
         continue
       end
-
+            
       if edge_weight_section
         data = split(line)
         n_data = length(data)
@@ -128,18 +128,18 @@ function read_edges(header::Dict{String}{String}, filename::String)
         while n_data > 0
           n_on_this_line = min(n_to_read, n_data)
 
-          for j = start : start + n_on_this_line - 1
+          for j = start:start + n_on_this_line - 1
             n_edges = n_edges + 1
             if edge_weight_format in ["UPPER_ROW", "LOWER_COL"]
-              edge = (k+1, i+k+2)
+              edge = (k + 1, i + k + 2, parse(Int, data[j + 1]))
             elseif edge_weight_format in ["UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
-              edge = (k+1, i+k+1)
+              edge = (k + 1, i + k + 1, parse(Int, data[j + 1]))
             elseif edge_weight_format in ["UPPER_COL", "LOWER_ROW"]
-              edge = (i+k+2, k+1)
+              edge = (i + k + 2, k + 1, parse(Int, data[j + 1]))
             elseif edge_weight_format in ["UPPER_DIAG_COL", "LOWER_DIAG_ROW"]
-              edge = (i+1, k+1)
+              edge = (i + 1, k + 1, parse(Int, data[j + 1]))
             elseif edge_weight_format == "FULL_MATRIX"
-              edge = (k+1, i+1)
+              edge = (k + 1, i + 1, parse(Int, data[j + 1]))
             else
               warn("Unknown format - function read_edges")
             end
@@ -184,24 +184,31 @@ function read_stsp(filename::String)
   Base.print("Reading of edges : ")
   edges_brut = read_edges(header, filename)
   graph_edges = []
-  for k = 1 : dim
+  graph_edges_weight = []
+  for k = 1:dim
     edge_list = Int[]
     push!(graph_edges, edge_list)
-  end
+    edge_weight = Int[]
+    push!(graph_edges_weight, edge_weight)
+    end
 
   for edge in edges_brut
     if edge_weight_format in ["UPPER_ROW", "LOWER_COL", "UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
       push!(graph_edges[edge[1]], edge[2])
+      push!(graph_edges_weight[edge[1]], edge[3])
     else
       push!(graph_edges[edge[2]], edge[1])
+      push!(graph_edges_weight[edge[2]], edge[3])
     end
-  end
+    end
 
-  for k = 1 : dim
-    graph_edges[k] = sort(graph_edges[k])
+  for k = 1:dim
+    index = sortperm(graph_edges[k])
+    graph_edges[k] = graph_edges[k][index]
+    graph_edges_weight[k] = graph_edges_weight[k][index]
   end
   println("✓")
-  return graph_nodes, graph_edges
+  return graph_nodes, graph_edges, graph_edges_weight
 end
 
 """Affiche un graphe étant données un ensemble de noeuds et d'arêtes.
@@ -216,7 +223,7 @@ function plot_graph(nodes, edges)
   fig = plot(legend=false)
 
   # edge positions
-  for k = 1 : length(edges)
+  for k = 1:length(edges)
     for j in edges[k]
       plot!([nodes[k][1], nodes[j][1]], [nodes[k][2], nodes[j][2]],
           linewidth=1.5, alpha=0.75, color=:lightgray)
@@ -229,11 +236,11 @@ function plot_graph(nodes, edges)
   y = [xy[2] for xy in xys]
   scatter!(x, y)
 
-  fig
+fig
 end
 
 """Fonction de commodité qui lit un fichier stsp et trace le graphe."""
 function plot_graph(filename::String)
-  graph_nodes, graph_edges = read_stsp(filename)
+  graph_nodes, graph_edges, _ = read_stsp(filename)
   plot_graph(graph_nodes, graph_edges)
 end
