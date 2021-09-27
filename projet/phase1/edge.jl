@@ -34,5 +34,5 @@ weight(edge::AbstractEdge) = edge.weight
 """Affiche une arête."""
 function show(edge::AbstractEdge)
   nodes_of_edge = nodes(edge)
-  println("Edge: ", name(edge), " of weight ", weight(edge), "composed by the nodes ", name(nodes_of_edge[1]), "and ", name(nodes_of_edge[2]))
+  println("Edge ", name(edge), ", weight: ", weight(edge), ", composed by nodes: ", name(nodes_of_edge[1]), " and ", name(nodes_of_edge[2]))
 end

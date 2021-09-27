@@ -10,9 +10,9 @@ Exemple :
     node1 = Node("Joe", 3.14)
     node2 = Node("Steve", exp(1))
     node3 = Node("Jill", 4.12)
-    edge1 = Edge([node1,node2],51)
-    edge2 = Edge([node2,node3],22)
-    edge3 = Edge([node3,node1],17)
+    edge1 = Edge("E1",[node1,node2],51)
+    edge2 = Edge("E2",[node2,node3],22)
+    edge3 = Edge("E3",[node3,node1],17)
     G = Graph("Ick", [node1, node2, node3], [edge1, edge2, edge3])
 
 Attention, tous les noeuds et arêtes doivent avoir des données de même type.
@@ -55,7 +55,7 @@ nb_edges(graph::AbstractGraph) = length(graph.edges)
 
 """Affiche un graphe"""
 function show(graph::Graph)
-  println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), "edges.")
+  println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), " edges.")
   for node in nodes(graph)
     show(node)
   end
