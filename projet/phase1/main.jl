@@ -8,12 +8,12 @@ include("read_stsp.jl");
 
 Exemples :
 
-    graph_structure = main("bayg29.tsp")
-    graph_structure = main("bayg29.tsp";show_graph_flag=true)
-    graph_structure = main("bayg29.tsp";plot_graph_flag=true)
-    graph_structure = main("bayg29.tsp";show_graph_flag=true,plot_graph_flag=true)
+    graph_structure = stsp_to_graph("bayg29.tsp")
+    graph_structure = stsp_to_graph("bayg29.tsp";show_graph_flag=true)
+    graph_structure = stsp_to_graph("bayg29.tsp";plot_graph_flag=true)
+    graph_structure = stsp_to_graph("bayg29.tsp";show_graph_flag=true,plot_graph_flag=true)
 """
-function main(filename::String;show_graph_flag=false,plot_graph_flag=false)
+function stsp_to_graph(filename::String;show_graph_flag=false,plot_graph_flag=false)
     # Lecture du fichier
     println("File: $(basename(filename))")
     graph_nodes, graph_edges, graph_edges_weight = read_stsp(filename);
@@ -36,6 +36,7 @@ function main(filename::String;show_graph_flag=false,plot_graph_flag=false)
         end
     end
     graph_structure = Graph(basename(filename), nodes_list, edges_list)
+    
     # Affichage du contenu du graphe
     if show_graph_flag
         show(graph_structure)
@@ -46,11 +47,14 @@ function main(filename::String;show_graph_flag=false,plot_graph_flag=false)
     return graph_structure
 end
 
-showgraph = false;
-plotgraph = false;
-for (root, dirs, files) in walkdir("instances/stsp/")
-    for file in files
-        graph_ = main(joinpath(root, file);show_graph_flag=showgraph,plot_graph_flag=plotgraph);
+""" Programme principal. """
+function main()
+    showgraph = false;
+    plotgraph = false;
+    for (root, dirs, files) in walkdir("instances/stsp/")
+        for file in files
+            graph_ = stsp_to_graph(joinpath(root, file);show_graph_flag=showgraph,plot_graph_flag=plotgraph);
+        end
     end
 end
 
