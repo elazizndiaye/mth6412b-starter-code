@@ -1,4 +1,5 @@
-import Base.show
+import Base.show, Base.isless
+
 
 """Type abstrait dont d'autres types de noeuds dériveront."""
 abstract type AbstractNode{T} end
@@ -25,6 +26,9 @@ name(node::AbstractNode) = node.name
 
 """Renvoie les données contenues dans le noeud."""
 data(node::AbstractNode) = node.data
+
+"""Compare deux noeuds."""
+isless(node1::Node, node2::Node) = data(node1) < data(node2)
 
 """Affiche un noeud."""
 function show(node::AbstractNode)
