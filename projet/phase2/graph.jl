@@ -1,7 +1,4 @@
 import Base.show
-include("node.jl");
-include("edge.jl");
-include("read_stsp.jl");
 
 """Type abstrait dont d'autres types de graphes dériveront."""
 abstract type AbstractGraph{T,S} end
@@ -122,3 +119,8 @@ function stsp_to_graph(filename::String;show_graph_flag=false,plot_graph_flag=fa
   graph_structure
 end
 
+"""Trie les arêtes d'un graphe suivant leurs poids."""
+function sort_edge(graph::AbstractGraph)
+  sorted_edges = sort(edges(graph));
+  return sorted_edges
+end

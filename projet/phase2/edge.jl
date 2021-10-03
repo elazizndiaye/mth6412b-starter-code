@@ -1,5 +1,4 @@
-import Base.show
-include("node.jl");
+import Base.show, Base.isless
 
 """Type abstrait dont d'autres types d'arêtes dériveront."""
 abstract type AbstractEdge{T,S} end
@@ -46,6 +45,9 @@ end_node(edge::AbstractEdge) = edge.end_node
 
 """Renvoie le poids de l'arête."""
 weight(edge::AbstractEdge) = edge.weight
+
+"""Compare deux arêtes: inégalité stricte."""
+isless(edge1::AbstractEdge, edge2::AbstractEdge) = weight(edge1) < weight(edge2)
 
 """Affiche une arête."""
 function show(edge::AbstractEdge)
