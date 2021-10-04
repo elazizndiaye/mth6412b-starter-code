@@ -2,7 +2,7 @@ include("../graph.jl");
 
 using Test
 
-println("Test de la structure de donnée `Graph`")
+print("Test de la structure de donnée `Graph` : ")
 
 # Constructeur
 node1 = Node("a", 2); 

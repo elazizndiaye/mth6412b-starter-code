@@ -26,34 +26,34 @@ mutable struct ConnectedComponents{T}
 end
 
 """Ajoute un noeud-composante dans l'ensemble des composante des composantes connexes."""
-function add_component!(connecCompos::ConnectedComponents{T}, compo::Component{T}) where T
-    push!(connecCompos.components, compo);
-    return connecCompos
+function add_component!(connec_compos::ConnectedComponents{T}, compo::Component{T}) where T
+    push!(connec_compos.components, compo);
+    return connec_compos
 end
 
 """Retourne un noeud-composante à partir d'un noeud."""
-function component(connecCompos::ConnectedComponents{T}, node::Node{T}) where T
+function component(connec_compos::ConnectedComponents{T}, node::Node{T}) where T
     inode = data(node);
-    compo = connecCompos.components[inode];
+    compo = connec_compos.components[inode];
     return compo
 end
 
 """Retourne la racine d'un noeud."""
-function find_root(connecCompos::ConnectedComponents{T}, node_::Node{T}) where T
-    compo = component(connecCompos, node_);
+function find_root(connec_compos::ConnectedComponents{T}, node_::Node{T}) where T
+    compo = component(connec_compos, node_);
     parent_ = parent(compo);
     if parent_ != node_
         node_ = parent_;
-        node_ = find_root(connecCompos, node_);
+        node_ = find_root(connec_compos, node_);
     end
     node_
 end
 
 """Fusionne deux composantes connexes."""
-function union_components!(connecCompos::ConnectedComponents{T}, node1::Node{T}, node2::Node{T}) where T
-    root1 = find_root(connecCompos, node1);
-    root2 = find_root(connecCompos, node2);
-    compo1 = component(connecCompos, root1);
+function union_components!(connec_compos::ConnectedComponents{T}, node1::Node{T}, node2::Node{T}) where T
+    root1 = find_root(connec_compos, node1);
+    root2 = find_root(connec_compos, node2);
+    compo1 = component(connec_compos, root1);
     set_parent!(compo1, root2);
 end
 
@@ -62,12 +62,12 @@ function kruskal(graph::AbstractGraph)
     # Tri des arêtespar poids
     sorted_edges = sort_edge(graph);
     # Initialisation des composantes connexes
-    connecCompos = ConnectedComponents(Component{Int}[]);
+    connec_compos = ConnectedComponents(Component{Int}[]);
     nodes_ = nodes(graph);
     nb_nodes_ = nb_nodes(graph);
     for inode = 1:nb_nodes_
         compo = Component(nodes_[inode]);
-        add_component!(connecCompos, compo);
+        add_component!(connec_compos, compo);
     end
     # Construction de l'arbre de recouvrement minimal
     mst = Edge{Int}[]
@@ -76,11 +76,11 @@ function kruskal(graph::AbstractGraph)
         edge = sorted_edges[iedge];
         node1 = start_node(edge);
         node2 = end_node(edge);
-        root1 = find_root(connecCompos, node1);
-        root2 = find_root(connecCompos, node2);
+        root1 = find_root(connec_compos, node1);
+        root2 = find_root(connec_compos, node2);
         if root1 != root2
             push!(mst, edge);
-            union_components!(connecCompos, root1, root2);
+            union_components!(connec_compos, root1, root2);
         end
     end
     return mst

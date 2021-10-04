@@ -2,7 +2,7 @@ include("../node.jl");
 
 using Test
 
-println("Test de la structure de donnée `Node`")
+print("Test de la structure de donnée `Node` : ")
 
 # Constructeur
 node1 = Node("a", 1); 
