@@ -1,4 +1,4 @@
-import Base.show, Base.isless
+import Base.show, Base.isless, Base.==
 
 """Type abstrait dont d'autres types d'arêtes dériveront."""
 abstract type AbstractEdge{T,S} end
@@ -48,6 +48,12 @@ weight(edge::AbstractEdge) = edge.weight
 
 """Compare deux arêtes: inégalité stricte."""
 isless(edge1::AbstractEdge, edge2::AbstractEdge) = weight(edge1) < weight(edge2)
+
+"""Compare deux arêtes: égalité."""
+function ==(edge1::AbstractEdge, edge2::AbstractEdge)
+  ans = (start_node(edge1) == start_node(edge2)) && (end_node(edge1) == end_node(edge2)) # graphe simple
+  return ans
+end
 
 """Affiche une arête."""
 function show(edge::AbstractEdge)
