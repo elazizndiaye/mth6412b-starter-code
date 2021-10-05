@@ -22,19 +22,28 @@ end
 
 """Type représentant l'ensemble des composantes connexes d'un graphe."""
 mutable struct ConnectedComponents{T}
-    components::Vector{Component{T}}
+    components::Dict{Node{T}}{Component{T}}
+end
+
+"""Construit un ensemble de composantes connexes à partir d'un vecteur de noeud-composante."""
+function ConnectedComponents(compos::Vector{Component{T}}) where T 
+   connec_compos = ConnectedComponents(Dict{Node{T},Component{T}}());
+   for icompo = 1:length(compos)
+    add_component!(connec_compos, compos[icompo]);
+   end
+   connec_compos
 end
 
 """Ajoute un noeud-composante dans l'ensemble des composante des composantes connexes."""
 function add_component!(connec_compos::ConnectedComponents{T}, compo::Component{T}) where T
-    push!(connec_compos.components, compo);
+    node_ = node(compo);
+    connec_compos.components[node_] = compo;
     return connec_compos
 end
 
 """Retourne un noeud-composante à partir d'un noeud."""
 function component(connec_compos::ConnectedComponents{T}, node::Node{T}) where T
-    inode = data(node);
-    compo = connec_compos.components[inode];
+    compo = connec_compos.components[node];
     return compo
 end
 
@@ -84,4 +93,14 @@ function kruskal(graph::AbstractGraph)
         end
     end
     return mst
+end
+
+"""Retourne le poids total de l'arbre de recouvrement minimal."""
+function weight_mst(mst::Vector{Edge{Int}})
+    total_weight = 0
+    for iedge = 1:length(mst)
+        edge = mst[iedge];
+        total_weight += weight(edge);
+    end
+    total_weight
 end
