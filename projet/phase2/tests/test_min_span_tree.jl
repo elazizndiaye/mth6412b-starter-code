@@ -65,7 +65,8 @@ mst_test = kruskal(G);
 mst_exact = [edge1,edge2,edge5,edge6,edge7,edge8,edge11,edge12]
 sort!(mst_exact)
 # Test
-@test length(mst_test) == length(mst_exact); # taille des vecteurs
+@test length(mst_test) == 8; # taille des vecteurs
+@test weight_mst(mst_test) == 37; # Poids total de l'arbre minimal
 for iedge = 1:length(mst_test)
     @test mst_test[iedge] == mst_exact[iedge]; # arêtes de l'arbre
 end
