@@ -16,7 +16,7 @@ function main()
             # Arbre de recouvrement minimal du graph
             print("Arbre de recouvrement minimal : ")
             mst = kruskal(graph);
-            println("$(weight_mst(mst)) (poids total) ✓");
+            println("$(weight_mst(mst)) (poids total) -v");
         end
     end
     

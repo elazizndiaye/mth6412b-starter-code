@@ -174,13 +174,13 @@ end
 function read_stsp(filename::String)
   Base.print("Reading of header : ")
   header = read_header(filename)
-  println("✓")
+  println("-v")
   dim = parse(Int, header["DIMENSION"])
   edge_weight_format = header["EDGE_WEIGHT_FORMAT"]
 
   Base.print("Reading of nodes : ")
   graph_nodes = read_nodes(header, filename)
-  println("✓")
+  println("-v")
 
   Base.print("Reading of edges : ")
   edges_brut = read_edges(header, filename)
@@ -208,7 +208,7 @@ function read_stsp(filename::String)
     graph_edges[k] = graph_edges[k][index]
     graph_edges_weight[k] = graph_edges_weight[k][index]
   end
-  println("✓")
+  println("-v")
   return graph_nodes, graph_edges, graph_edges_weight
 end
 
