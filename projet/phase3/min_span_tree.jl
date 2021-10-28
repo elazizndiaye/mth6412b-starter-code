@@ -4,10 +4,11 @@ import Base.show
 mutable struct Component{T}
     node::Node{T}
     parent::Node{T}
+    rank::Int64
 end
 
 """Construit une composante connexe à partir d'un noeud."""
-Component(node::Node{T}) where T = Component{T}(node, node);
+Component(node::Node{T}) where T = Component{T}(node, node, 0);
 
 """Retourne le noeud parent d'un noeud-composante."""
 parent(compo::Component{T}) where T = compo.parent;
@@ -15,9 +16,17 @@ parent(compo::Component{T}) where T = compo.parent;
 """Retourne le noeud d'un noeud-composante."""
 node(compo::Component{T}) where T = compo.node;
 
+"""Retourne le rang d'un noeud-composante."""
+rank(compo::Component{T}) where T = compo.rank;
+
 """Mute le noeud parent d'un noeud-composante."""
 function set_parent!(compo::Component{T}, parent::Node{T}) where T 
     compo.parent = parent;
+end
+
+"""Incrémente le rang d'un noeud-composante."""
+function increment_rank!(compo::Component{T}) where T 
+    compo.rank = compo.rank + 1;
 end
 
 """Type représentant l'ensemble des composantes connexes d'un graphe."""
@@ -60,10 +69,17 @@ end
 
 """Fusionne deux composantes connexes."""
 function union_components!(connec_compos::ConnectedComponents{T}, node1::Node{T}, node2::Node{T}) where T
-    root1 = find_root(connec_compos, node1);
-    root2 = find_root(connec_compos, node2);
-    compo1 = component(connec_compos, root1);
-    set_parent!(compo1, root2);
+    root1 = find_root(connec_compos, node1); compo1 = component(connec_compos, root1);
+    root2 = find_root(connec_compos, node2); compo2 = component(connec_compos, root2);
+    # union via le rang
+    if rank(compo2) > rank(compo1)
+        set_parent!(compo1, root2);
+    elseif rank(compo2) < rank(compo1)
+        set_parent!(compo2, root1);
+    else
+        set_parent!(compo1, root2);
+        increment_rank!(compo2);
+end
 end
 
 """Retourne l'arbre de recouvrement minimal en utilisant l'algorithme de Kruskal."""
