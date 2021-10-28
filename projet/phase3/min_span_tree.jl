@@ -60,9 +60,16 @@ end
 function find_root(connec_compos::ConnectedComponents{T}, node_::Node{T}) where T
     compo = component(connec_compos, node_);
     parent_ = parent(compo);
-    if parent_ != node_
+    compos_encountred = Vector{Component{T}}();
+    while parent_ != node_
+        push!(compos_encountred, compo);
         node_ = parent_;
-        node_ = find_root(connec_compos, node_);
+        compo = component(connec_compos, node_);
+        parent_ = parent(compo);
+    end
+    # Compression des chemins
+    for compo_encountred in compos_encountred
+        set_parent!(compo_encountred, node_);
     end
     node_
 end
