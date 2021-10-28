@@ -84,7 +84,7 @@ function stsp_to_graph(filename::String;show_graph_flag=false,plot_graph_flag=fa
     push!(nodes_list, Node{Int}("$i_node", i_node));
   end
   edges_list = Edge{Int,Int}[]
-  nb_edges = convert(Int64, length(graph_edges) * (length(graph_edges) - 1) / 2)
+  nb_edges =  div(length(graph_edges) * (length(graph_edges) - 1), 2)
   stocked_edge = fill(false, nb_edges)
   for i = 1:length(graph_edges)
     node1 = nodes_list[i]
@@ -97,7 +97,7 @@ function stsp_to_graph(filename::String;show_graph_flag=false,plot_graph_flag=fa
       else
         continue;
       end
-      global_index = convert(Int64, nb_edges - (length(graph_edges) - t1 + 1) * (length(graph_edges) - t1) / 2 + t2 - t1);
+      global_index = nb_edges - div((length(graph_edges) - t1 + 1) * (length(graph_edges) - t1), 2) + t2 - t1;
       if stocked_edge[global_index] == false
         stocked_edge[global_index] = true;
         node2 = nodes_list[k]
