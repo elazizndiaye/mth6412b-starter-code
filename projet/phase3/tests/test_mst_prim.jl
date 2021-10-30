@@ -47,7 +47,14 @@ function run_test_prim()
     edge13 = Edge{Int64,Int64}("g <-> i", node7, node9, 6);
     G = Graph("G1", [node1,node2,node3,node4,node5,node6,node7,node8,node9],
                  [edge1,edge2,edge3,edge4,edge5,edge6,edge7,edge8,edge9,edge10,edge11,edge12,edge13])
-
+    # Test des listes d'adjacence
+    adj_edges_graph_start, adj_edges_graph = node_to_edges(G);
+    adj_edges = adj_edges_graph[adj_edges_graph_start[3]:adj_edges_graph_start[4] - 1];  # node3
+    adj_edges_exact = [edge3,edge5,edge6,edge7]; # arêtes qui contiennent node3
+    @test length(adj_edges) == length(adj_edges_exact);
+    for i = 1:length(adj_edges)
+        @test adj_edges[i] == adj_edges_exact[i];
+    end
     # Arbre de recouvrement minimal
     mst_test = prim(G);
     sort!(mst_test);
