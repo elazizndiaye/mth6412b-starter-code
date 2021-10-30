@@ -50,7 +50,7 @@ function popfirst!(q::PriorityQueue)
         end
     end
     idx = findall(x -> x == lowest, q.items)[1]
-    deleteat!(q.items, 1)
+    deleteat!(q.items, idx)
     lowest
 end
 

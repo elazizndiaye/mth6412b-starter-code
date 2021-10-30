@@ -1,52 +1,34 @@
-include("../min_span_tree.jl")
+include("../mst_prim.jl")
 
 using Test
 
-function run_test_connected_components()
-    print("Test de la structure de données `Component` : ")
+function run_test_componentPrim()
+    print("Test de la structure de données `ComponentPrim` : ")
     # Constructeur de Component
     node_a = Node("a", 1); 
     node_b = Node("b", 2); 
-    comp1 = Component(node_a, node_b);
-    comp2 = Component(node_b);
+    edge1 = Edge{Int64,Int64}("a <-> b", node_a, node_b, 4);
+    comp1 = ComponentPrim(node_a, edge1, 1.0);
+    comp2 = ComponentPrim(node_b);
 
-    # Accesseurs et mutateurs de Component
-    @test parent(comp1) == node_b;
-    @test parent(comp2) == node_b;
+    # Accesseurs et mutateurs de ComponentPrim
     @test node(comp1) == node_a;
+    @test parent(comp1) == edge1;
+    @test min_weight(comp1) == 1.0
+    @test node(comp2) == node_b;
+    @test parent(comp2) === nothing;
+    @test min_weight(comp2) == Inf;
     node_c = Node("c", 3);
-    set_parent!(comp2, node_c);
-    @test parent(comp2) == node_c;
-    println("-v");
-
-    print("Test de la structure de données `ConnectedComponents` : ")
-
-    # Constructeur d'un ensemble de composantes connexes
-    connec_compos = ConnectedComponents([comp1,comp2])
-
-    # Ajout d'une composante
-    comp3 = Component(node_c);
-    add_component!(connec_compos, comp3);
-
-    # Find root
-    @test find_root(connec_compos, node_a) == node_c
-
-    # Fusion de composantes connexes
-    node_d = Node("d", 4);
-    node_e = Node("e", 5); 
-    comp4 = Component(node_d, node_e);
-    comp5 = Component(node_e);
-    add_component!(connec_compos, comp4);
-    add_component!(connec_compos, comp5);
-    @test find_root(connec_compos, node_a) != find_root(connec_compos, node_d)
-    union_components!(connec_compos, node_a, node_d);
-    @test find_root(connec_compos, node_a) == find_root(connec_compos, node_d)
-
+    edge2 = Edge{Int64,Int64}("b <-> c", node_b, node_c, 8);
+    set_parent!(comp2, edge2);
+    @test parent(comp2) == edge2;
+    set_min_weight!(comp2, 3.25);
+    @test min_weight(comp2) == 3.25;
     println("-v");
 end
 
-function run_test_kruskal()
-    print("Test de l'algorithme de Kruskal : ")
+function run_test_prim()
+    print("Test de l'algorithme de Prim : ")
     node1 = Node("a", 1); node2 = Node("b", 2); node3 = Node("c", 3);
     node4 = Node("d", 4); node5 = Node("e", 5); node6 = Node("f", 6);
     node7 = Node("g", 7); node8 = Node("h", 8); node9 = Node("i", 9);
@@ -67,7 +49,8 @@ function run_test_kruskal()
                  [edge1,edge2,edge3,edge4,edge5,edge6,edge7,edge8,edge9,edge10,edge11,edge12,edge13])
 
     # Arbre de recouvrement minimal
-    mst_test = kruskal(G);
+    mst_test = prim(G);
+    sort!(mst_test);
     # Arbre de recouvrement exact
     mst_exact = [edge1,edge2,edge5,edge6,edge7,edge8,edge11,edge12]
     sort!(mst_exact)
@@ -75,7 +58,11 @@ function run_test_kruskal()
     @test length(mst_test) == 8; # taille des vecteurs
     @test weight_mst(mst_test) == 37; # Poids total de l'arbre minimal
     for iedge = 1:length(mst_test)
-        @test mst_test[iedge] == mst_exact[iedge]; # arêtes de l'arbre
+        @test weight(mst_test[iedge]) == weight(mst_exact[iedge]); # arêtes de l'arbre
     end
+    # Changement du noeud de départ de l'algorithme de Prim
+    mst_test = prim(G;node_source=node6);
+    @test length(mst_test) == 8; # taille des vecteurs
+    @test weight_mst(mst_test) == 37; # Poids total de l'arbre minimal
     println("-v")
 end
