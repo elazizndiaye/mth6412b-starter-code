@@ -14,9 +14,12 @@ function run_test_connected_components()
     @test parent(comp1) == node_b;
     @test parent(comp2) == node_b;
     @test node(comp1) == node_a;
+    @test rank(comp2) == 0;
     node_c = Node("c", 3);
     set_parent!(comp2, node_c);
     @test parent(comp2) == node_c;
+    increment_rank!(comp2)
+    @test rank(comp2) == 1;
     println("-v");
 
     print("Test de la structure de données `ConnectedComponents` : ")
@@ -25,22 +28,27 @@ function run_test_connected_components()
     connec_compos = ConnectedComponents([comp1,comp2])
 
     # Ajout d'une composante
-    comp3 = Component(node_c);
+    comp3 = Component(node_c, node_c, 2); 
     add_component!(connec_compos, comp3);
 
-    # Find root
+    # Find root et compression des chemins
+    @test parent(comp1) == node_b; # comp1 -> node_a
+    @test parent(comp2) == node_c; # comp2 -> node_b
     @test find_root(connec_compos, node_a) == node_c
+    @test parent(comp1) == node_c; # comp1 -> node_a
+    @test parent(comp2) == node_c; # comp2 -> node_b
 
-    # Fusion de composantes connexes
+    # Fusion de composantes connexes et test du rang
     node_d = Node("d", 4);
     node_e = Node("e", 5); 
     comp4 = Component(node_d, node_e, 0);
-    comp5 = Component(node_e);
+    comp5 = Component(node_e, node_e, 1);
     add_component!(connec_compos, comp4);
     add_component!(connec_compos, comp5);
     @test find_root(connec_compos, node_a) != find_root(connec_compos, node_d)
     union_components!(connec_compos, node_a, node_d);
-    @test find_root(connec_compos, node_a) == find_root(connec_compos, node_d)
+    @test find_root(connec_compos, node_a) == find_root(connec_compos, node_d) # test union_components
+    @test find_root(connec_compos, node_d) == node_c # test union by rank
 
     println("-v");
 end
