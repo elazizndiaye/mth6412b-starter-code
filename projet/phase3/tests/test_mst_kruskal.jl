@@ -4,6 +4,7 @@ using Test
 
 function run_test_connected_components()
     print("Test de la structure de données `Component` : ")
+
     # Constructeur de Component
     node_a = Node("a", 1); 
     node_b = Node("b", 2); 
@@ -15,11 +16,15 @@ function run_test_connected_components()
     @test parent(comp2) == node_b;
     @test node(comp1) == node_a;
     @test rank(comp2) == 0;
+
     node_c = Node("c", 3);
+
     set_parent!(comp2, node_c);
     @test parent(comp2) == node_c;
+
     increment_rank!(comp2)
     @test rank(comp2) == 1;
+
     println("-v");
 
     print("Test de la structure de données `ConnectedComponents` : ")
@@ -46,6 +51,7 @@ function run_test_connected_components()
     add_component!(connec_compos, comp4);
     add_component!(connec_compos, comp5);
     @test find_root(connec_compos, node_a) != find_root(connec_compos, node_d)
+
     union_components!(connec_compos, node_a, node_d);
     @test find_root(connec_compos, node_a) == find_root(connec_compos, node_d) # test union_components
     @test find_root(connec_compos, node_d) == node_c # test union by rank
@@ -55,6 +61,7 @@ end
 
 function run_test_kruskal()
     print("Test de l'algorithme de Kruskal : ")
+
     node1 = Node("a", 1); node2 = Node("b", 2); node3 = Node("c", 3);
     node4 = Node("d", 4); node5 = Node("e", 5); node6 = Node("f", 6);
     node7 = Node("g", 7); node8 = Node("h", 8); node9 = Node("i", 9);
@@ -76,14 +83,14 @@ function run_test_kruskal()
 
     # Arbre de recouvrement minimal
     mst_test = kruskal(G);
-    # Arbre de recouvrement exact
-    mst_exact = [edge1,edge2,edge5,edge6,edge7,edge8,edge11,edge12]
+    mst_exact = [edge1,edge2,edge5,edge6,edge7,edge8,edge11,edge12] # Arbre de recouvrement exact
     sort!(mst_exact)
-    # Test
+
     @test length(mst_test) == 8; # taille des vecteurs
     @test weight_mst(mst_test) == 37; # Poids total de l'arbre minimal
     for iedge = 1:length(mst_test)
         @test mst_test[iedge] == mst_exact[iedge]; # arêtes de l'arbre
     end
+    
     println("-v")
 end
