@@ -29,6 +29,11 @@ function increment_rank!(compo::Component{T}) where T
     compo.rank = compo.rank + 1;
 end
 
+"""Mute le rang d'un noeud-composante."""
+function set_rank!(compo::Component{T}, new_rank::Int64) where T 
+    compo.rank = new_rank;
+end
+
 """Type représentant l'ensemble des composantes connexes d'un graphe."""
 mutable struct ConnectedComponents{T}
     components::Dict{Node{T}}{Component{T}}
@@ -68,8 +73,10 @@ function find_root(connec_compos::ConnectedComponents{T}, node_::Node{T}) where 
         parent_ = parent(compo);
     end
     # Compression des chemins
+    new_rank = rank(compo) - 1;
     for compo_encountred in compos_encountred
         set_parent!(compo_encountred, node_);
+        set_rank!(compo_encountred, new_rank);
     end
     node_
 end

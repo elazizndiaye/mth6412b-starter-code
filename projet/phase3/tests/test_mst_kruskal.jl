@@ -39,9 +39,13 @@ function run_test_connected_components()
     # Find root et compression des chemins
     @test parent(comp1) == node_b; # comp1 -> node_a
     @test parent(comp2) == node_c; # comp2 -> node_b
+    @test rank(comp1) == 0 # comp2 -> node_a
+    @test rank(comp2) == 1 # comp2 -> node_b
     @test find_root(connec_compos, node_a) == node_c
-    @test parent(comp1) == node_c; # comp1 -> node_a
-    @test parent(comp2) == node_c; # comp2 -> node_b
+    @test parent(comp1) == node_c; # chemin compressé
+    @test parent(comp2) == node_c; 
+    @test rank(comp1) == 1 # rang mis à jour après compression
+    @test rank(comp2) == 1 
 
     # Fusion de composantes connexes et test du rang
     node_d = Node("d", 4);
