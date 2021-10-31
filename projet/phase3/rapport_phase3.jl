@@ -4,7 +4,7 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 77932c9f-5000-4d9f-ac00-2af2a2f07d2e
+# ╔═╡ f691fb05-b10b-4b7e-a4e9-ed8e83927c2b
 begin
 	using PlutoUI
 	using Plots
@@ -12,136 +12,85 @@ begin
 	include("edge.jl")
 	include("read_stsp.jl")
 	include("graph.jl")
-	include("min_span_tree.jl")
+	include("mst_kruskal.jl")
+	include("mst_prim.jl")
 	include("tests/test_node.jl")
 	include("tests/test_edge.jl")
 	include("tests/test_graph.jl")
-	include("tests/test_min_span_tree.jl")
+	include("tests/test_mst_kruskal.jl")
+	include("tests/test_mst_prim.jl")
 end
 
-# ╔═╡ 06e93d60-2654-11ec-17fe-89d9d50370a9
+# ╔═╡ 8c9befa0-39bb-11ec-0dd7-1348be620d4b
 md"
 # MTH6412B: Projet Voyageur de Commerce
-## Phase 2: Arbres de recouvrement minimaux
+## Phase 3: Arbres de recouvrement minimaux (II)
 * **Auteur**: El Hadji Abdou Aziz Ndiaye (1879468)
-* **Code source**: [Repertoire Github](https://github.com/elazizndiaye/mth6412b-starter-code/tree/phase2)
+* **Code source**: [Repertoire Github](https://github.com/elazizndiaye/mth6412b-starter-code/tree/phase3)
 "
 
-# ╔═╡ 975e877e-da60-4e5e-837f-7826c08ecd5f
+# ╔═╡ e70e6901-f75c-4d5b-98d7-8e9952b873f2
 md"
 ## Importation du code
 "
 
-# ╔═╡ f2622aef-9953-41c6-93c3-fe3576806e88
+# ╔═╡ 41e56075-2111-4a64-ab9a-c46f88c17a6e
 md"
-## Révision du code de la phase 1
+## Révision du code de la phase 2
 "
 
-# ╔═╡ f6527885-162c-448e-ad79-5f89fc1330f1
+# ╔═╡ f6ab46b3-e0e2-4d88-bb99-e1d4216f4186
 md"
-La structure **`Edge`** a été modifiée. Elle contient maintenant 4 champs:
-* `name` : nom de l'arête
-* `start_node` : premier noeud de l'arête
-* `end_node` : deuxième noeud de l'arête
-* `weight` : poids de l'arête
+La fonction de conversion d'un fichier de type `stsp` en objet `Graph` a été améliorée.
+
+L'ensemble des tests de la phase 2 sont repris dans cette phase 3.
+De nouvelles lignes de tests sont ajoutées pour tenir compte des changements apportés lors de la phase 3.
 "
 
-# ╔═╡ 3a341b8d-48af-4dab-8918-d23de959426c
-md"
-Lors de la construction d'un graphe à travers un fichier _stsp_ , les arêtes sont maintenant stockés une seule fois.
+# ╔═╡ 298207a4-c137-4298-bf16-6f2722a3f9a0
+md" Tests des structures de base (**`Node`**, **`Edge`** et **`Graph`**)
 "
 
-# ╔═╡ 1decec26-ab80-4450-911a-117ae75b5000
-md"
-Des tests unitaires sont ajoutés pour les structures **`Node`**, **`Edge`** et **`Graph`**.
-"
-
-# ╔═╡ f81741b8-1e58-4abf-bdbd-3e69ef03c804
+# ╔═╡ 974e2ad5-8643-4127-affa-81ffc2ad28e6
 with_terminal() do
 	run_test_node()
 	run_test_edge()
 	run_test_graph()
 end
 
-# ╔═╡ dba5c731-b588-4b74-9298-b2c8935b2222
+# ╔═╡ 26379f9c-f34b-4dd7-b30c-607856533bcd
 md"
-## Structure de données des composantes connexes
-### Implémentation
-La structure de données des composantes connexes est un graphe. Chaque noeud de ce graphe est de type **`Component`**. 
-
-Chaque noeud du graph est associé à un `Component`.
-
-La structure `Component` comporte 2 champs:
-* `node`: Le noeud auquel `Component` est associé.
-* `parent`: Le parent du noeud `node` (le lien de parenté est issu de la connexité).
-
-La structure de données **`ConnectedComponnents`** permet de faire le lien entre les différents `Component`.
-Cette structure est représentée par un dictionnaire qui associe chaque noeud du graphe à son composante.
-
-Avec la structure de `ConnectedComponnents`, il est possible d'implémenter deux fonctions:
-* *find_root* qui pour un noeud **n1** donné, retourne un noeud **n2** racine de la composante connexe où se trouve le noeud **n1**.
-* *union_components!* permet de fusionner deux composantes connexes distinctes.
-
-### Tests
-Des tests unitaires accompagne cette implémentation.
+## Heuristiques d'accélération des opérations sur les composantes connexes
 "
 
-# ╔═╡ 4dac7807-0cd1-4e28-9de8-8d91d57f2ba3
+# ╔═╡ 8d93d940-e56c-43d7-b27d-b74b8a58691b
+md"
+### Compression des chemins
+À chaque appel de `find_root`, les noeuds traversés sont compressés et deviennent des enfants directs de la racine trouvée.
+### Union via le rang
+Un champ `rank` qui représente le rang d'un noeud a été ajouté dans la structure `Component`. Lors de la fusion de deux composantes connexes, leurs rangs sont comparés pour choisir le parent des deux composantes fusionnées.
+"
+
+# ╔═╡ d8fdebd6-c390-44ae-b3c9-35c7978399d5
+md"
+Des tests unitaires pemettent de vérifier l'implémentation de ces deux heuristiques.
+"
+
+# ╔═╡ cd2f789f-b108-4b42-9afc-aa80bd4b3eb1
 with_terminal() do
 	run_test_connected_components()
-end
-
-# ╔═╡ 4039cb69-0108-4d00-9754-d7301d501368
-md"
-## Algorithme de Kruskal
-### Implémentation
-Grâce à la structure de données des composantes connexes, l'algorithme de Kruskal s'implémente de façon assez directe.
-
-Pour ce faire, les arêtes sont d'abord triées par poids puis parcourues une à une. 
-
-Pour chaque arête, on vérifie si ses deux noeuds sont dans la même composante connexes. Pour faire cette vérification, il faut utiliser la fonction *find_root* et comparer les racines des noeuds de l'arête.
-
-Si les deux composantes connexes sont différentes, on les fusionne grâce à la fonction *union_components!*
-### Test
-On utilise le graphe de l'exemple du cours pour tester l'implémentation de l'algorithme de Kruskal:
-"
-
-# ╔═╡ 0656aba2-b133-4bda-a1b9-238d2903acb7
-with_terminal() do
 	run_test_kruskal()
 end
 
-# ╔═╡ 095a38af-8e8b-46f8-9114-53864b9d6136
+# ╔═╡ dd88c50f-97a6-4fa1-84b0-8a2887ad059c
 md"
-## Programme principal
+### Propriétés du rang
+
 "
 
-# ╔═╡ 1580dc09-11e5-4291-b8f8-3673471fd57b
+# ╔═╡ bd1496b7-6ec3-4bdc-a74a-ec69822a2ebf
 md"
-La fonction *main* permet de lire l'ensemble des fichiers contenus dans le repertoire `instances/stsp/`. Pour chaque fichier, on construit le graphe correspondant et on calcule l'arbre de recouvrement minimal.
-
-#### Résultats du programme principal:
 "
-
-# ╔═╡ 5f7e0556-b3b7-4d77-b6ac-1f0124d6a2f9
-with_terminal() do
-	function main()
-	    showgraph = false;
-	    plotgraph = false;
-	    for (root, dirs, files) in walkdir("../../instances/stsp/")
-	        for file in files
-	            # Lecture et stockage du graph
-	            graph = stsp_to_graph(joinpath(root, file);show_graph_flag=showgraph,plot_graph_flag=plotgraph);
-	            # Arbre de recouvrement minimal du graph
-	            print("Arbre de recouvrement minimal : ")
-	            mst = kruskal(graph);
-	            println("$(weight_mst(mst)) (poids total) -v");
-	        end
-	    end
-	    
-	end
-	main()
-end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -150,8 +99,8 @@ Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
-Plots = "~1.22.4"
-PlutoUI = "~0.7.14"
+Plots = "~1.23.2"
+PlutoUI = "~0.7.16"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -185,6 +134,12 @@ git-tree-sha1 = "f2202b55d816427cd385a9a4f3ffb226bee80f99"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
 version = "1.16.1+0"
 
+[[ChainRulesCore]]
+deps = ["Compat", "LinearAlgebra", "SparseArrays"]
+git-tree-sha1 = "3533f5a691e60601fe60c90d8bc47a27aa2907ec"
+uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+version = "1.11.0"
+
 [[ColorSchemes]]
 deps = ["ColorTypes", "Colors", "FixedPointNumbers", "Random"]
 git-tree-sha1 = "a851fec56cb73cfdf43762999ec72eff5b86882a"
@@ -205,9 +160,9 @@ version = "0.12.8"
 
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "SHA", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
-git-tree-sha1 = "31d0151f5716b655421d9d75b7fa74cc4e744df2"
+git-tree-sha1 = "dce3e3fea680869eaa0b774b2e8343e9ff442313"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "3.39.0"
+version = "3.40.0"
 
 [[CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -246,6 +201,12 @@ uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 [[Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+
+[[DocStringExtensions]]
+deps = ["LibGit2"]
+git-tree-sha1 = "b19534d1895d702889b219c382a6e18010797f0b"
+uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
+version = "0.8.6"
 
 [[Downloads]]
 deps = ["ArgTools", "LibCURL", "NetworkOptions"]
@@ -307,21 +268,21 @@ version = "1.0.10+0"
 
 [[GLFW_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libglvnd_jll", "Pkg", "Xorg_libXcursor_jll", "Xorg_libXi_jll", "Xorg_libXinerama_jll", "Xorg_libXrandr_jll"]
-git-tree-sha1 = "dba1e8614e98949abfa60480b13653813d8f0157"
+git-tree-sha1 = "0c603255764a1fa0b61752d2bec14cfbd18f7fe8"
 uuid = "0656b61e-2033-5cc2-a64a-77c0f6c09b89"
-version = "3.3.5+0"
+version = "3.3.5+1"
 
 [[GR]]
 deps = ["Base64", "DelimitedFiles", "GR_jll", "HTTP", "JSON", "Libdl", "LinearAlgebra", "Pkg", "Printf", "Random", "Serialization", "Sockets", "Test", "UUIDs"]
-git-tree-sha1 = "c2178cfbc0a5a552e16d097fae508f2024de61a3"
+git-tree-sha1 = "d189c6d2004f63fd3c91748c458b09f26de0efaa"
 uuid = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
-version = "0.59.0"
+version = "0.61.0"
 
 [[GR_jll]]
 deps = ["Artifacts", "Bzip2_jll", "Cairo_jll", "FFMPEG_jll", "Fontconfig_jll", "GLFW_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pixman_jll", "Pkg", "Qt5Base_jll", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "ef49a187604f865f4708c90e3f431890724e9012"
+git-tree-sha1 = "fd75fa3a2080109a2c0ec9864a6e14c60cca3866"
 uuid = "d2c73de3-f751-5644-a686-071e5b155ba9"
-version = "0.59.0+0"
+version = "0.62.0+0"
 
 [[GeometryBasics]]
 deps = ["EarCut_jll", "IterTools", "LinearAlgebra", "StaticArrays", "StructArrays", "Tables"]
@@ -364,10 +325,16 @@ git-tree-sha1 = "8a954fed8ac097d5be04921d595f741115c1b2ad"
 uuid = "2e76f6c2-a576-52d4-95c1-20adfe4de566"
 version = "2.8.1+0"
 
+[[Hyperscript]]
+deps = ["Test"]
+git-tree-sha1 = "8d511d5b81240fc8e6802386302675bdf47737b9"
+uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
+version = "0.0.4"
+
 [[HypertextLiteral]]
-git-tree-sha1 = "72053798e1be56026b81d4e2682dbe58922e5ec9"
+git-tree-sha1 = "5efcf53d798efede8fee5b2c8b09284be359bf24"
 uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
-version = "0.9.0"
+version = "0.9.2"
 
 [[IOCapture]]
 deps = ["Logging", "Random"]
@@ -384,6 +351,17 @@ version = "0.5.0"
 [[InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+
+[[InverseFunctions]]
+deps = ["Test"]
+git-tree-sha1 = "f0c6489b12d28fb4c2103073ec7452f3423bd308"
+uuid = "3587e190-3f89-42d0-90ee-14403ec27112"
+version = "0.1.1"
+
+[[IrrationalConstants]]
+git-tree-sha1 = "7fd44fd4ff43fc60815f8e764c0f352b83c49151"
+uuid = "92d709cd-6900-40b7-9082-c6be49f344b6"
+version = "0.1.1"
 
 [[IterTools]]
 git-tree-sha1 = "05110a2ab1fc5f932622ffea2a003221f4782c18"
@@ -432,9 +410,9 @@ version = "1.2.1"
 
 [[Latexify]]
 deps = ["Formatting", "InteractiveUtils", "LaTeXStrings", "MacroTools", "Markdown", "Printf", "Requires"]
-git-tree-sha1 = "a4b12a1bd2ebade87891ab7e36fdbce582301a92"
+git-tree-sha1 = "a8f4f279b6fa3c3c4f1adadd78a621b13a506bce"
 uuid = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
-version = "0.15.6"
+version = "0.15.9"
 
 [[LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
@@ -507,14 +485,20 @@ version = "2.36.0+0"
 deps = ["Libdl"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
+[[LogExpFunctions]]
+deps = ["ChainRulesCore", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
+git-tree-sha1 = "6193c3815f13ba1b78a51ce391db8be016ae9214"
+uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
+version = "0.3.4"
+
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [[MacroTools]]
 deps = ["Markdown", "Random"]
-git-tree-sha1 = "5a5bc6bf062f0f95e62d0fe0a2d99699fed82dd9"
+git-tree-sha1 = "3d3e902b31198a27340d0bf00d6ac452866021cf"
 uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
-version = "0.5.8"
+version = "0.5.9"
 
 [[Markdown]]
 deps = ["Base64"]
@@ -586,9 +570,9 @@ version = "8.44.0+0"
 
 [[Parsers]]
 deps = ["Dates"]
-git-tree-sha1 = "a8709b968a1ea6abc2dc1967cb1db6ac9a00dfb6"
+git-tree-sha1 = "d911b6a12ba974dabe2291c6d450094a7226b372"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.0.5"
+version = "2.1.1"
 
 [[Pixman_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -614,15 +598,15 @@ version = "1.0.15"
 
 [[Plots]]
 deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "GeometryBasics", "JSON", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "PlotThemes", "PlotUtils", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs"]
-git-tree-sha1 = "6841db754bd01a91d281370d9a0f8787e220ae08"
+git-tree-sha1 = "ca7d534a27b1c279f05cd094196cb70c35e3d892"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-version = "1.22.4"
+version = "1.23.2"
 
 [[PlutoUI]]
-deps = ["Base64", "Dates", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "UUIDs"]
-git-tree-sha1 = "d1fb76655a95bf6ea4348d7197b22e889a4375f4"
+deps = ["Base64", "Dates", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "UUIDs"]
+git-tree-sha1 = "4c8a7d080daca18545c56f1cac28710c362478f3"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.14"
+version = "0.7.16"
 
 [[Preferences]]
 deps = ["TOML"]
@@ -721,10 +705,10 @@ uuid = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
 version = "1.0.0"
 
 [[StatsBase]]
-deps = ["DataAPI", "DataStructures", "LinearAlgebra", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
-git-tree-sha1 = "8cbbc098554648c84f79a463c9ff0fd277144b6c"
+deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
+git-tree-sha1 = "eb35dcc66558b2dda84079b9a1be17557d32091a"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-version = "0.33.10"
+version = "0.33.12"
 
 [[StructArrays]]
 deps = ["Adapt", "DataAPI", "StaticArrays", "Tables"]
@@ -980,20 +964,18 @@ version = "0.9.1+5"
 """
 
 # ╔═╡ Cell order:
-# ╟─06e93d60-2654-11ec-17fe-89d9d50370a9
-# ╟─975e877e-da60-4e5e-837f-7826c08ecd5f
-# ╠═77932c9f-5000-4d9f-ac00-2af2a2f07d2e
-# ╟─f2622aef-9953-41c6-93c3-fe3576806e88
-# ╟─f6527885-162c-448e-ad79-5f89fc1330f1
-# ╟─3a341b8d-48af-4dab-8918-d23de959426c
-# ╟─1decec26-ab80-4450-911a-117ae75b5000
-# ╟─f81741b8-1e58-4abf-bdbd-3e69ef03c804
-# ╟─dba5c731-b588-4b74-9298-b2c8935b2222
-# ╟─4dac7807-0cd1-4e28-9de8-8d91d57f2ba3
-# ╟─4039cb69-0108-4d00-9754-d7301d501368
-# ╟─0656aba2-b133-4bda-a1b9-238d2903acb7
-# ╟─095a38af-8e8b-46f8-9114-53864b9d6136
-# ╟─1580dc09-11e5-4291-b8f8-3673471fd57b
-# ╟─5f7e0556-b3b7-4d77-b6ac-1f0124d6a2f9
+# ╟─8c9befa0-39bb-11ec-0dd7-1348be620d4b
+# ╟─e70e6901-f75c-4d5b-98d7-8e9952b873f2
+# ╟─f691fb05-b10b-4b7e-a4e9-ed8e83927c2b
+# ╟─41e56075-2111-4a64-ab9a-c46f88c17a6e
+# ╟─f6ab46b3-e0e2-4d88-bb99-e1d4216f4186
+# ╟─298207a4-c137-4298-bf16-6f2722a3f9a0
+# ╟─974e2ad5-8643-4127-affa-81ffc2ad28e6
+# ╟─26379f9c-f34b-4dd7-b30c-607856533bcd
+# ╟─8d93d940-e56c-43d7-b27d-b74b8a58691b
+# ╟─d8fdebd6-c390-44ae-b3c9-35c7978399d5
+# ╟─cd2f789f-b108-4b42-9afc-aa80bd4b3eb1
+# ╟─dd88c50f-97a6-4fa1-84b0-8a2887ad059c
+# ╠═bd1496b7-6ec3-4bdc-a74a-ec69822a2ebf
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
