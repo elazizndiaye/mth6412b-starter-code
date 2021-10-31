@@ -48,7 +48,7 @@ De nouvelles lignes de tests sont ajoutées pour tenir compte des changements ap
 "
 
 # ╔═╡ 298207a4-c137-4298-bf16-6f2722a3f9a0
-md" Tests des structures de base (**`Node`**, **`Edge`** et **`Graph`**)
+md" Tests des structures de base (**`Node`**, **`Edge`** et **`Graph`**):
 "
 
 # ╔═╡ 974e2ad5-8643-4127-affa-81ffc2ad28e6
@@ -90,7 +90,56 @@ md"
 
 # ╔═╡ bd1496b7-6ec3-4bdc-a74a-ec69822a2ebf
 md"
+* La racine de l'arbre d'une composante connexe est le sommet qui a le rang le plus élevé. Ainsi, au pire cas, on peut avoir un arbre dont les sommets sont reliés un à un: ``s_0 \rightarrow s_1 \rightarrow s_2 \rightarrow \dots \rightarrow s_n`` (avec ``s_n`` la racine). Dans ce cas, le rang de la racine ``s_n`` est ``n``. Par ailleurs, on a ``n = |S| - 1`` où ``|S|`` est le nombre de sommets du graphe. Ainsi, le rang de tout noeud du graphe est inférieur à ``|S|-1``.
+* Lorsqu'on construit une composante connexe, on augmente le rang maximal du graphe seulement lorsque les deux sous-arbres qu'on veut fusionner ont des racines ayant le même rang. Posons ``N(i)`` comme étant le nombre minimal de sommets d'un arbre ayant une racine de rang i. On a donc, ``N(i) \geq 2N(i-1) \Rightarrow N(i) \geq 2^iN(0)``. Or ``N(0) = 1`` (il faut d'un noeud au minimum pour avoir un arbre ayant une racine de rang ``0``) et ``N(i) \leq |S|`` quelques soit la composante connexe. Ainsi, on a donc ``2^i \leq |S| \Rightarrow i \leq \log_2(|S|)``. Celà veut dire donc que le rang de tout noeud d'une composante connexe est inférieur à ``\lfloor\log_2(|S|)\rfloor`` (le rang est un entier).
 "
+
+# ╔═╡ e781b663-cd8e-41b0-84cb-78d32835e598
+md"
+## Algorithme de Prim
+L'algorithme de Prim a été implémenté. L'implémentation utilise les listes d'adjacence noeud-arêtes et une file de priorité pour calculer l'arbre de recouvrement minimal.
+
+L'algorithme a été testé sur l'exemple du cours et il donne un résultat correct.
+"
+
+# ╔═╡ 5cda98b9-3c65-49db-9223-b646c98fe906
+with_terminal() do
+	run_test_prim()
+end
+
+# ╔═╡ 025845b4-9703-46fb-a550-0fc7751dd30b
+md"
+## Programme principal
+"
+
+# ╔═╡ 98bc6a4d-479d-4410-9ae5-c71d282b2c99
+md"
+La fonction *main* permet de lire l'ensemble des fichiers contenus dans le repertoire `instances/stsp/`. Pour chaque fichier, on construit le graphe correspondant et on calcule les arbres de recouvrement minimaux avec les algorithmes de Kruskal et de Prim.
+
+#### Résultats du programme principal:
+"
+
+# ╔═╡ 4fcab507-4ae4-46dd-9bd9-564f82579a75
+ with_terminal() do
+	function main()
+		showgraph = false;
+		plotgraph = false;
+		for (root, dirs, files) in walkdir("../../instances/stsp/")
+			for file in files
+				# Lecture et stockage du graph
+				graph = stsp_to_graph(joinpath(root, file);show_graph_flag=showgraph,plot_graph_flag=plotgraph);
+				# Arbre de recouvrement minimal du graph
+				print("Arbre de recouvrement minimal : ")
+				mst_kruskal = kruskal(graph);
+				print("$(weight_mst(mst_kruskal)) (Kruskal) ");
+				mst_prim = prim(graph);
+				println("$(weight_mst(mst_prim)) (Prim) -v");
+			end
+		end
+
+	end
+	main()
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -966,7 +1015,7 @@ version = "0.9.1+5"
 # ╔═╡ Cell order:
 # ╟─8c9befa0-39bb-11ec-0dd7-1348be620d4b
 # ╟─e70e6901-f75c-4d5b-98d7-8e9952b873f2
-# ╟─f691fb05-b10b-4b7e-a4e9-ed8e83927c2b
+# ╠═f691fb05-b10b-4b7e-a4e9-ed8e83927c2b
 # ╟─41e56075-2111-4a64-ab9a-c46f88c17a6e
 # ╟─f6ab46b3-e0e2-4d88-bb99-e1d4216f4186
 # ╟─298207a4-c137-4298-bf16-6f2722a3f9a0
@@ -976,6 +1025,11 @@ version = "0.9.1+5"
 # ╟─d8fdebd6-c390-44ae-b3c9-35c7978399d5
 # ╟─cd2f789f-b108-4b42-9afc-aa80bd4b3eb1
 # ╟─dd88c50f-97a6-4fa1-84b0-8a2887ad059c
-# ╠═bd1496b7-6ec3-4bdc-a74a-ec69822a2ebf
+# ╟─bd1496b7-6ec3-4bdc-a74a-ec69822a2ebf
+# ╟─e781b663-cd8e-41b0-84cb-78d32835e598
+# ╟─5cda98b9-3c65-49db-9223-b646c98fe906
+# ╟─025845b4-9703-46fb-a550-0fc7751dd30b
+# ╟─98bc6a4d-479d-4410-9ae5-c71d282b2c99
+# ╟─4fcab507-4ae4-46dd-9bd9-564f82579a75
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
