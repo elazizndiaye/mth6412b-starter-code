@@ -24,13 +24,13 @@ mutable struct Graph{T,S} <: AbstractGraph{T,S}
 end
 
 """Ajoute un noeud au graphe."""
-function add_node!(graph::Graph{T}, node::Node{T}) where T
+function add_node!(graph::Graph{T}, node::Node{T}) where {T}
   push!(graph.nodes, node)
   graph
 end
 
 """Ajoute une arête au graphe."""
-function add_edge!(graph::Graph{T}, edge::Edge{T}) where T
+function add_edge!(graph::Graph{T}, edge::Edge{T}) where {T}
   push!(graph.edges, edge)
   graph
 end
@@ -73,42 +73,46 @@ Exemples :
     graph_structure = stsp_to_graph("bayg29.tsp";plot_graph_flag=true)
     graph_structure = stsp_to_graph("bayg29.tsp";show_graph_flag=true,plot_graph_flag=true)
 """
-function stsp_to_graph(filename::String;show_graph_flag=false,plot_graph_flag=false)
+function stsp_to_graph(filename::String; show_graph_flag = false, plot_graph_flag = false, verbose_flag = true)
   # Lecture du fichier
-  println("File: $(basename(filename))")
-  graph_nodes, graph_edges, graph_edges_weight = read_stsp(filename);
+  if verbose_flag
+    println("File: $(basename(filename))")
+  end
+  graph_nodes, graph_edges, graph_edges_weight = read_stsp(filename; verbose_flag)
 
   # Stockage dans une structure de type Graph
   nodes_list = Node{Int}[]
   for i_node = 1:length(graph_edges)
-    push!(nodes_list, Node{Int}("$i_node", i_node));
+    push!(nodes_list, Node{Int}("$i_node", i_node))
   end
   edges_list = Edge{Int,Int}[]
-  nb_edges =  div(length(graph_edges) * (length(graph_edges) - 1), 2)
+  nb_edges = div(length(graph_edges) * (length(graph_edges) - 1), 2)
   stocked_edge = fill(false, nb_edges)
   for i = 1:length(graph_edges)
     node1 = nodes_list[i]
     for j = 1:length(graph_edges[i])
-      k = graph_edges[i][j];
+      k = graph_edges[i][j]
       if k > i
-        t1 = i; t2 = k;
+        t1 = i
+        t2 = k
       elseif k < i
-        t1 = k; t2 = i;
+        t1 = k
+        t2 = i
       else
-        continue;
+        continue
       end
-      global_index = nb_edges - div((length(graph_edges) - t1 + 1) * (length(graph_edges) - t1), 2) + t2 - t1;
+      global_index = nb_edges - div((length(graph_edges) - t1 + 1) * (length(graph_edges) - t1), 2) + t2 - t1
       if stocked_edge[global_index] == false
-        stocked_edge[global_index] = true;
+        stocked_edge[global_index] = true
         node2 = nodes_list[k]
         poids = graph_edges_weight[i][j]
-        edge = Edge{Int,Int}("$global_index", node1, node2, poids);
-        push!(edges_list, edge);
-        end
+        edge = Edge{Int,Int}("$global_index", node1, node2, poids)
+        push!(edges_list, edge)
+      end
     end
   end
   graph_structure = Graph(basename(filename), nodes_list, edges_list)
-  
+
   # Affichage du contenu du graphe
   if show_graph_flag
     show(graph_structure)
@@ -121,37 +125,47 @@ end
 
 """Trie les arêtes d'un graphe suivant leurs poids."""
 function sort_edge(graph::AbstractGraph)
-  sorted_edges = sort(edges(graph));
+  sorted_edges = sort(edges(graph))
   return sorted_edges
+end
+
+"""Cherche une arête du graphe donnée par ses deux noeuds."""
+function find_edge(graph::AbstractGraph, node1::Node{T}, node2::Node{T}) where {T}
+  edges_ = edges(graph)
+  for edge in edges_
+    if (start_node(edge) == node1 && end_node(edge) == node2) || (start_node(edge) == node2 && end_node(edge) == node1)
+      return edge
+    end
+  end
 end
 
 """Retourne les listes d'adjacene noeud -> arêtes."""
 function node_to_edges(graph::AbstractGraph)
-  nodes_ = nodes(graph);
-  edges_ = edges(graph);
-  adj_edges_start = zeros(Int, length(nodes_) + 1);
+  nodes_ = nodes(graph)
+  edges_ = edges(graph)
+  adj_edges_start = zeros(Int, length(nodes_) + 1)
   for edge in edges_
-    adj_edges_start[data(start_node(edge)) + 1] += 1;
-    adj_edges_start[data(end_node(edge)) + 1] += 1;
+    adj_edges_start[data(start_node(edge))+1] += 1
+    adj_edges_start[data(end_node(edge))+1] += 1
   end
-  adj_edges_start[1] = 1;
-  for i = 2:length(nodes_) + 1
-    adj_edges_start[i] += adj_edges_start[i - 1];
+  adj_edges_start[1] = 1
+  for i = 2:length(nodes_)+1
+    adj_edges_start[i] += adj_edges_start[i-1]
   end
-  adj_edges = Vector{typeof(edges_[1])}(undef, adj_edges_start[end] - 1);
+  adj_edges = Vector{typeof(edges_[1])}(undef, adj_edges_start[end] - 1)
   for edge in edges_
-    istart = data(start_node(edge));
-    istore = adj_edges_start[istart];
-    adj_edges_start[istart] = istore + 1;
-    adj_edges[istore] = edge;
-    iend = data(end_node(edge));
-    istore = adj_edges_start[iend];
-    adj_edges_start[iend] = istore + 1;
-    adj_edges[istore] = edge;
+    istart = data(start_node(edge))
+    istore = adj_edges_start[istart]
+    adj_edges_start[istart] = istore + 1
+    adj_edges[istore] = edge
+    iend = data(end_node(edge))
+    istore = adj_edges_start[iend]
+    adj_edges_start[iend] = istore + 1
+    adj_edges[istore] = edge
   end
-  for i = length(nodes_) + 1:-1:2
-    adj_edges_start[i] = adj_edges_start[i - 1];
+  for i = length(nodes_)+1:-1:2
+    adj_edges_start[i] = adj_edges_start[i-1]
   end
-  adj_edges_start[1] = 1;
+  adj_edges_start[1] = 1
   return adj_edges_start, adj_edges
 end

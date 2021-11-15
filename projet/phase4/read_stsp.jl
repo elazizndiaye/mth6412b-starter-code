@@ -6,7 +6,7 @@ function read_header(filename::String)
   file = open(filename, "r")
   header = Dict{String}{String}()
   sections = ["NAME", "TYPE", "COMMENT", "DIMENSION", "EDGE_WEIGHT_TYPE", "EDGE_WEIGHT_FORMAT",
-  "EDGE_DATA_FORMAT", "NODE_COORD_TYPE", "DISPLAY_DATA_TYPE"]
+    "EDGE_DATA_FORMAT", "NODE_COORD_TYPE", "DISPLAY_DATA_TYPE"]
 
   # Initialize header
   for section in sections
@@ -96,8 +96,8 @@ function read_edges(header::Dict{String}{String}, filename::String)
   edges = []
   edge_weight_format = header["EDGE_WEIGHT_FORMAT"]
   known_edge_weight_formats = ["FULL_MATRIX", "UPPER_ROW", "LOWER_ROW",
-  "UPPER_DIAG_ROW", "LOWER_DIAG_ROW", "UPPER_COL", "LOWER_COL",
-  "UPPER_DIAG_COL", "LOWER_DIAG_COL"]
+    "UPPER_DIAG_ROW", "LOWER_DIAG_ROW", "UPPER_COL", "LOWER_COL",
+    "UPPER_DIAG_COL", "LOWER_DIAG_COL"]
 
   if !(edge_weight_format in known_edge_weight_formats)
     @warn "unknown edge weight format" edge_weight_format
@@ -120,7 +120,7 @@ function read_edges(header::Dict{String}{String}, filename::String)
         edge_weight_section = true
         continue
       end
-            
+
       if edge_weight_section
         data = split(line)
         n_data = length(data)
@@ -128,9 +128,9 @@ function read_edges(header::Dict{String}{String}, filename::String)
         while n_data > 0
           n_on_this_line = min(n_to_read, n_data)
 
-          for j = start:start + n_on_this_line - 1
+          for j = start:start+n_on_this_line-1
             n_edges = n_edges + 1
-            poids = parse(Int, data[j + 1]);
+            poids = parse(Int, data[j+1])
             if edge_weight_format in ["UPPER_ROW", "LOWER_COL"]
               edge = (k + 1, i + k + 2, poids)
             elseif edge_weight_format in ["UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
@@ -171,18 +171,28 @@ function read_edges(header::Dict{String}{String}, filename::String)
 end
 
 """Renvoie les noeuds et les arêtes du graphe."""
-function read_stsp(filename::String)
-  Base.print("Reading of header : ")
+function read_stsp(filename::String; verbose_flag = true)
+  if verbose_flag
+    Base.print("Reading of header : ")
+  end
   header = read_header(filename)
-  println("-v")
+  if verbose_flag
+    println("-v")
+  end
   dim = parse(Int, header["DIMENSION"])
   edge_weight_format = header["EDGE_WEIGHT_FORMAT"]
 
-  Base.print("Reading of nodes : ")
+  if verbose_flag
+    Base.print("Reading of nodes : ")
+  end
   graph_nodes = read_nodes(header, filename)
-  println("-v")
+  if verbose_flag
+    println("-v")
+  end
 
-  Base.print("Reading of edges : ")
+  if verbose_flag
+    Base.print("Reading of edges : ")
+  end
   edges_brut = read_edges(header, filename)
   graph_edges = []
   graph_edges_weight = []
@@ -191,7 +201,7 @@ function read_stsp(filename::String)
     push!(graph_edges, edge_list)
     edge_weight = Int[]
     push!(graph_edges_weight, edge_weight)
-    end
+  end
 
   for edge in edges_brut
     if edge_weight_format in ["UPPER_ROW", "LOWER_COL", "UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
@@ -201,14 +211,16 @@ function read_stsp(filename::String)
       push!(graph_edges[edge[2]], edge[1])
       push!(graph_edges_weight[edge[2]], edge[3])
     end
-    end
+  end
 
   for k = 1:dim
     index = sortperm(graph_edges[k])
     graph_edges[k] = graph_edges[k][index]
     graph_edges_weight[k] = graph_edges_weight[k][index]
   end
-  println("-v")
+  if verbose_flag
+    println("-v")
+  end
   return graph_nodes, graph_edges, graph_edges_weight
 end
 
@@ -221,13 +233,13 @@ Exemple :
     savefig("bayg29.pdf")
 """
 function plot_graph(nodes, edges)
-  fig = plot(legend=false)
+  fig = plot(legend = false)
 
   # edge positions
   for k = 1:length(edges)
     for j in edges[k]
       plot!([nodes[k][1], nodes[j][1]], [nodes[k][2], nodes[j][2]],
-          linewidth=1.5, alpha=0.75, color=:lightgray)
+        linewidth = 1.5, alpha = 0.75, color = :lightgray)
     end
   end
 
@@ -237,7 +249,7 @@ function plot_graph(nodes, edges)
   y = [xy[2] for xy in xys]
   scatter!(x, y)
 
-fig
+  fig
 end
 
 """Fonction de commodité qui lit un fichier stsp et trace le graphe."""
