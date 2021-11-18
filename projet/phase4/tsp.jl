@@ -72,10 +72,13 @@ end
 
 "Affiche la solution tsp"
 function plot_tsp_solution(tsp_file::AbstractString, nodes_cycle)
+    fig = plot(legend = false)
     verbose_flag = false
     nodes, edges = read_stsp(tsp_file; verbose_flag)
-    fig = plot(legend = false)
-
+    if isempty(nodes)
+        println("The TSP solution cannot be displayed. The coordinates are not given.")
+        return
+    end
     # edge positions
     for i = 1:length(nodes_cycle)-1
         n1 = data(nodes_cycle[i])
@@ -87,13 +90,11 @@ function plot_tsp_solution(tsp_file::AbstractString, nodes_cycle)
     n1 = data(nodes_cycle[end])
     n2 = data(nodes_cycle[1])
     plot!([nodes[n1][1], nodes[n2][1]], [nodes[n1][2], nodes[n2][2]],
-        linewidth = 1.5, alpha = 0.75, color = :lightgray)
-
+        linewidth = 1.5, alpha = 0.75, color = :lightgray, title = "$(basename(tsp_file)[1:end-4])")
     # node positions
     xys = values(nodes)
     x = [xy[1] for xy in xys]
     y = [xy[2] for xy in xys]
     scatter!(x, y)
-
-    fig
+    display(fig)
 end
