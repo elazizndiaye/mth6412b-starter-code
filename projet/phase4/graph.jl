@@ -137,6 +137,7 @@ function find_edge(graph::AbstractGraph, node1::Node{T}, node2::Node{T}) where {
       return edge
     end
   end
+  error("Edge not found")
 end
 
 """Retourne les listes d'adjacene noeud -> arêtes."""
