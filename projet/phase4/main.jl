@@ -12,10 +12,15 @@ include("tsp_hk.jl")
 include("tsp.jl")
 
 """ Lit un fichier tsp et appliques les algorithmes de krusl, Prim, RSL et Held et Karp."""
-function run_tsp_instance(instance)
+function run_tsp_instance(instance;
+    rsl_flag = true, index_node_source = 1, rsl_check_triangular_ineq = false,
+    hkl_flag = true, hk_mst_alg = "PRIM", hk_step = 1, hk_n_iterations = 100, hk_verbose = false
+)
     # Lecture et stockage du graph
     filename = basename(instance)[1:end-4]
     graph = stsp_to_graph(instance)
+    nodes_ = nodes(graph)
+    node_source = nodes_[index_node_source]
     # Arbre de recouvrement minimal du graph
     println("Arbre de recouvrement minimal : -v")
     mst_kruskal = kruskal(graph)
@@ -23,20 +28,34 @@ function run_tsp_instance(instance)
     mst_prim, _ = prim(graph)
     println("\tPrim : $(weight_mst(mst_prim))")
     # Cycle Hamiltonien
-    println("Cycle Hamiltonien : -v")
-    # # RSL
-    tri_ineq = false
-    # tri_ineq = check_triangular_inequality(graph)
+    println("TSP solution: -v")
     optimal = get_tsp_optimal_solution(filename)
-    rsl_cycle, rsl_nodes_cycle = rsl(graph)
-    # rsl_cycle, _, _ = rsl(graph, optimal)
     println("\tOptimal cycle = $optimal")
-    rsl_cycle_weight = weight_cycle(rsl_cycle)
-    error_rsl = compute_relative_error(rsl_cycle_weight, optimal)
-    check_ineq_rsl = rsl_cycle_weight <= 2 * optimal
-    @printf("\tRSL cycle weight = %d [Relative Error (%.2f%%)] - [Triangular inequality (%s)] - [%d ≤ 2×%d (%s)]\n", rsl_cycle_weight, 100 * error_rsl, tri_ineq, rsl_cycle_weight, optimal, check_ineq_rsl)
-    # Affichage de la solution rsl
-    plot_tsp_solution(instance, rsl_nodes_cycle)
+    # RSL
+    if rsl_flag
+        @printf("\tRSL algorithm:\n")
+        if rsl_check_triangular_ineq
+            tri_ineq = check_triangular_inequality(graph)
+            @printf("\t\tTriangular inequality :%s\n", tri_ineq)
+        end
+        # Calcul de la solution
+        rsl_cycle, rsl_nodes_cycle = rsl(graph; node_source = node_source)
+        rsl_cycle_weight = weight_cycle(rsl_cycle)
+        error_rsl = compute_relative_error(rsl_cycle_weight, optimal)
+        check_ineq_rsl = rsl_cycle_weight <= 2 * optimal
+        @printf("\t\tRSL cycle weight = %d\n\t\tRelative Error = %.2f%%\n\t\t %d ≤ 2×%d (%s)\n", rsl_cycle_weight, 100 * error_rsl, rsl_cycle_weight, optimal, check_ineq_rsl)
+        # Affichage de la solution rsl
+        plot_tsp_rsl_solution(instance, rsl_nodes_cycle)
+    end
+    if hkl_flag
+        @printf("\tHK algorithm:\n")
+        # Calcul de la solution
+        hk_one_tree, W_hk = hk(graph; node_source = node_source, mst_alg = hk_mst_alg, step = hk_step, n_iterations = hk_n_iterations, verbose = hk_verbose)
+        error_hk = compute_relative_error(W_hk, optimal)
+        @printf("\t\tHK cycle weight = %d\n\t\tRelative Error = %.2f%%\n", W_hk, 100 * error_hk)
+        # Affichage de la solution HK
+        plot_tsp_hk_solution(instance, hk_one_tree)
+    end
 end
 
 """ Programme principal. """
@@ -53,9 +72,9 @@ function main()
 end
 
 
-#main()
-# run_tsp_instance("C:/Users/dabakh/Desktop/A21/MTH6412B/Code/Projet/mth6412b-starter-code/instances/stsp/bayg29.tsp")
+# Tester une instance en particulier
+file = "./instances/stsp/bayg29.tsp"
+run_tsp_instance(file; hk_mst_alg = "KRUSKAL")
 
-file = "C:/Users/dabakh/Desktop/A21/MTH6412B/Code/Projet/mth6412b-starter-code/instances/stsp/bayg29.tsp"
-graph = stsp_to_graph(file)
-min_one_tree, W = hk(graph; n_iterations = 200)
+# Executer toutes les instances
+main()

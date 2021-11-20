@@ -12,7 +12,7 @@ function hk(graph::AbstractGraph; node_source = nothing, mst_alg = "PRIM", step 
     W = -Inf
     k = 0
     pi_k = zeros(n_nodes)
-    step_k = step
+    period_verbose = 20
     if verbose
         @printf("********** \tHeld and Karp\t **********\n")
         @printf("n_iterations (%d) - mst_algorithm (%s) - step size (%.1f) - node source (%d)\n", n_iterations, mst_alg, step, data(node_source))
@@ -30,10 +30,9 @@ function hk(graph::AbstractGraph; node_source = nothing, mst_alg = "PRIM", step 
             # Optimal value found
             return min_one_tree, W
         end
-        step_k = next_step!(step_k, k, n_nodes)
-        pi_k = pi_k .+ step_k * v_k
+        pi_k = pi_k .+ step * v_k
         k = k + 1
-        if verbose
+        if verbose && rem(k - 1, period_verbose) == 0
             @printf("%d\t\t%.1e\t\t%.1f\t\t\t%.1f\n", k, sum(abs.(v_k)) / length(v_k), weight_k, W)
         end
     end
@@ -83,10 +82,9 @@ function compute_min_tree!(sub_graph, adj_list_node_source, pi_k, node_source, m
         set_weight!(edge, weight_edge + pi_k1 + pi_k2)
     end
     if mst_alg == "PRIM"
-        mst, node_mst = prim(sub_graph)
+        mst, _ = prim(sub_graph)
     else
         mst = kruskal(sub_graph)
-        # nodes_mst = kruskal_preorder(mst)
     end
 
     min_weight1 = Inf
@@ -127,10 +125,4 @@ function node_degrees(one_tree, n_nodes::Int)
         d_k[data(end_node(edge))] += 1
     end
     d_k
-end
-
-"Retourne le pas de la prochaine itération de l'algorithme HK."
-function next_step!(step_k, k, n_nodes)
-    step_k = step_k
-    step_k
 end

@@ -70,13 +70,13 @@ function compute_relative_error(weight_approx, weight_optimal)
     return error_
 end
 
-"Affiche la solution tsp"
-function plot_tsp_solution(tsp_file::AbstractString, nodes_cycle)
+"Affiche la solution tsp RSL"
+function plot_tsp_rsl_solution(tsp_file::AbstractString, nodes_cycle)
     fig = plot(legend = false)
     verbose_flag = false
     nodes, edges = read_stsp(tsp_file; verbose_flag)
     if isempty(nodes)
-        println("The TSP solution cannot be displayed. The coordinates are not given.")
+        println("The TSP_RSL solution cannot be displayed. The coordinates are not given.")
         return
     end
     # edge positions
@@ -90,7 +90,36 @@ function plot_tsp_solution(tsp_file::AbstractString, nodes_cycle)
     n1 = data(nodes_cycle[end])
     n2 = data(nodes_cycle[1])
     plot!([nodes[n1][1], nodes[n2][1]], [nodes[n1][2], nodes[n2][2]],
-        linewidth = 1.5, alpha = 0.75, color = :lightgray, title = "$(basename(tsp_file)[1:end-4])")
+        linewidth = 1.5, alpha = 0.75, color = :lightgray, title = "RSL - $(basename(tsp_file)[1:end-4])")
+    # node positions
+    xys = values(nodes)
+    x = [xy[1] for xy in xys]
+    y = [xy[2] for xy in xys]
+    scatter!(x, y)
+    display(fig)
+end
+
+"Affiche la solution tsp HK"
+function plot_tsp_hk_solution(tsp_file::AbstractString, one_tree)
+    fig = plot(legend = false)
+    verbose_flag = false
+    nodes, edges = read_stsp(tsp_file; verbose_flag)
+    if isempty(nodes)
+        println("The TSP_HK solution cannot be displayed. The coordinates are not given.")
+        return
+    end
+    # edge positions
+    for edge in one_tree
+        n1 = data(start_node(edge))
+        n2 = data(end_node(edge))
+        plot!([nodes[n1][1], nodes[n2][1]], [nodes[n1][2], nodes[n2][2]],
+            linewidth = 1.5, alpha = 0.75, color = :lightgray)
+    end
+    # close cycle
+    n1 = data(start_node(one_tree[1]))
+    n2 = data(end_node(one_tree[1]))
+    plot!([nodes[n1][1], nodes[n2][1]], [nodes[n1][2], nodes[n2][2]],
+        linewidth = 1.5, alpha = 0.75, color = :lightgray, title = " HK - $(basename(tsp_file)[1:end-4])")
     # node positions
     xys = values(nodes)
     x = [xy[1] for xy in xys]
