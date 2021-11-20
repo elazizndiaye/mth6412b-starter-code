@@ -8,6 +8,7 @@ include("graph.jl");
 include("mst_kruskal.jl")
 include("mst_prim.jl")
 include("tsp_rsl.jl")
+include("tsp_hk.jl")
 include("tsp.jl")
 
 """ Lit un fichier tsp et appliques les algorithmes de krusl, Prim, RSL et Held et Karp."""
@@ -52,6 +53,9 @@ function main()
 end
 
 
-main()
+#main()
 # run_tsp_instance("C:/Users/dabakh/Desktop/A21/MTH6412B/Code/Projet/mth6412b-starter-code/instances/stsp/bayg29.tsp")
-# file = "C:/Users/dabakh/Desktop/A21/MTH6412B/Code/Projet/mth6412b-starter-code/instances/stsp/brazil58.tsp"
+
+file = "C:/Users/dabakh/Desktop/A21/MTH6412B/Code/Projet/mth6412b-starter-code/instances/stsp/bayg29.tsp"
+graph = stsp_to_graph(file)
+min_one_tree, W = hk(graph; n_iterations = 200)

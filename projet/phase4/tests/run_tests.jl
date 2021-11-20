@@ -3,8 +3,7 @@ include("test_edge.jl");
 include("test_graph.jl");
 include("test_mst_kruskal.jl")
 include("test_mst_prim.jl")
-include("../tsp_rsl.jl")
-include("../tsp.jl")
+include("test_tsp_rsl.jl")
 
 run_test_node();
 run_test_edge();

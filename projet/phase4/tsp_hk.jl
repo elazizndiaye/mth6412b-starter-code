@@ -6,7 +6,7 @@ function hk(graph::AbstractGraph; node_source = nothing, mst_alg = "PRIM", step 
     nodes_ = nodes(graph_copy)
     n_nodes = length(nodes_)
     if node_source === nothing
-        node_source = nodes_[end]
+        node_source = nodes_[1]
     end
     sub_graph_init, adj_list_node_source = generate_sub_graph(graph_copy, node_source)
     W = -Inf
@@ -26,7 +26,7 @@ function hk(graph::AbstractGraph; node_source = nothing, mst_alg = "PRIM", step 
         weight_k = length_tree(min_one_tree) - 2 * sum(pi_k)
         W = max(W, weight_k)
         v_k = node_degrees(min_one_tree, n_nodes) .- 2
-        if all(v_k == 0)
+        if all(v_k .== 0)
             # Optimal value found
             return min_one_tree, W
         end
@@ -34,7 +34,7 @@ function hk(graph::AbstractGraph; node_source = nothing, mst_alg = "PRIM", step 
         pi_k = pi_k .+ step_k * v_k
         k = k + 1
         if verbose
-            @printf("%d\t\t%.1e\t\t%.1f\t\t%.1f\n", k, sum(v_k) / length(v_k), weight_k, W)
+            @printf("%d\t\t%.1e\t\t%.1f\t\t\t%.1f\n", k, sum(abs.(v_k)) / length(v_k), weight_k, W)
         end
     end
     return min_one_tree, W
