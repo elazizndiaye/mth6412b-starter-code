@@ -20,11 +20,11 @@ mutable struct Edge{T,S} <: AbstractEdge{T,S}
   weight::S
   function Edge{T,S}(name::String, start_node::Node{T}, end_node::Node{T}, weight::S) where {T,S}
     if end_node < start_node
-      temp = start_node;
-      start_node = end_node;
-      end_node = temp;
+      temp = start_node
+      start_node = end_node
+      end_node = temp
     end
-    new(name, start_node, end_node, weight);
+    new(name, start_node, end_node, weight)
   end
 end
 
@@ -45,6 +45,12 @@ end_node(edge::AbstractEdge) = edge.end_node
 
 """Renvoie le poids de l'arête."""
 weight(edge::AbstractEdge) = edge.weight
+
+"""Modifie le poids de l'arête."""
+function set_weight!(edge::AbstractEdge, new_weight)
+  edge.weight = new_weight
+  edge
+end
 
 """Compare deux arêtes: inégalité stricte."""
 isless(edge1::AbstractEdge, edge2::AbstractEdge) = weight(edge1) < weight(edge2)
