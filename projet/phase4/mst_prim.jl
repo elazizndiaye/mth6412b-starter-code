@@ -51,7 +51,6 @@ function prim(graph::AbstractGraph; node_source = nothing)
     set_min_weight!(compos[node_source], 0)
     # Calcul des listes d'adjacence
     adj_edges_graph = node_to_edges(graph)
-    # adj_edges_graph_start, adj_edges_graph = node_to_edges(graph)
     # Construction de l'arbre de recouvrement minimal
     mst = Edge{Int}[]
     nodes_mst = typeof(node_source)[]
@@ -65,8 +64,6 @@ function prim(graph::AbstractGraph; node_source = nothing)
             push!(nodes_mst, current_node)
         end
         # extraction des arêtes adjacents
-        # istart = data(current_node)
-        # adj_edges = adj_edges_graph[adj_edges_graph_start[istart]:adj_edges_graph_start[istart+1]-1]
         adj_edges = adj_edges_graph[current_node]
         for edge in adj_edges
             other_node = start_node(edge)

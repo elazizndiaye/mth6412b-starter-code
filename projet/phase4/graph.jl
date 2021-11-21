@@ -140,37 +140,6 @@ function find_edge(graph::AbstractGraph, node1::Node{T}, node2::Node{T}) where {
   error("Edge not found")
 end
 
-# """Retourne les listes d'adjacene noeud -> arêtes."""
-# function node_to_edges(graph::AbstractGraph)
-#   nodes_ = nodes(graph)
-#   edges_ = edges(graph)
-#   adj_edges_start = zeros(Int, length(nodes_) + 1)
-#   for edge in edges_
-#     adj_edges_start[data(start_node(edge))+1] += 1
-#     adj_edges_start[data(end_node(edge))+1] += 1
-#   end
-#   adj_edges_start[1] = 1
-#   for i = 2:length(nodes_)+1
-#     adj_edges_start[i] += adj_edges_start[i-1]
-#   end
-#   adj_edges = Vector{typeof(edges_[1])}(undef, adj_edges_start[end] - 1)
-#   for edge in edges_
-#     istart = data(start_node(edge))
-#     istore = adj_edges_start[istart]
-#     adj_edges_start[istart] = istore + 1
-#     adj_edges[istore] = edge
-#     iend = data(end_node(edge))
-#     istore = adj_edges_start[iend]
-#     adj_edges_start[iend] = istore + 1
-#     adj_edges[istore] = edge
-#   end
-#   for i = length(nodes_)+1:-1:2
-#     adj_edges_start[i] = adj_edges_start[i-1]
-#   end
-#   adj_edges_start[1] = 1
-#   return adj_edges_start, adj_edges
-# end
-
 """Retourne les listes d'adjacene noeud -> arêtes."""
 function node_to_edges(graph::AbstractGraph)
   nodes_ = nodes(graph)

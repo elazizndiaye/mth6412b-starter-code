@@ -6,25 +6,24 @@ using InteractiveUtils
 
 # ╔═╡ fef203bb-46da-45dc-925a-7d201d4174ab
 begin
-	using PlutoUI
-	using Plots
-	include("node.jl")
-	include("edge.jl")
-	include("read_stsp.jl")
-	include("graph.jl")
-	include("mst_kruskal.jl")
-	include("mst_prim.jl")
-	include("tsp_rsl.jl")
-	include("tsp_hk.jl")
-	include("tsp.jl")
-	include("tests/test_node.jl")
-	include("tests/test_edge.jl")
-	include("tests/test_graph.jl")
-	include("tests/test_mst_kruskal.jl")
-	include("tests/test_mst_prim.jl")
-	include("tests/test_tsp_rsl.jl")
-	include("tests/test_tsp_hk.jl")
-	include("tests/test_tsp.jl")
+    using PlutoUI
+    using Plots
+    include("node.jl")
+    include("edge.jl")
+    include("read_stsp.jl")
+    include("graph.jl")
+    include("mst_kruskal.jl")
+    include("mst_prim.jl")
+    include("tsp_rsl.jl")
+    include("tsp_hk.jl")
+    include("tsp.jl")
+    include("tests/test_node.jl")
+    include("tests/test_edge.jl")
+    include("tests/test_graph.jl")
+    include("tests/test_mst_kruskal.jl")
+    include("tests/test_mst_prim.jl")
+    include("tests/test_tsp_rsl.jl")
+    include("tests/test_tsp_hk.jl")
 end
 
 # ╔═╡ 300838c0-4a5a-11ec-0a53-59386b845dd4
@@ -47,9 +46,13 @@ md"
 
 # ╔═╡ 97b1d9f4-45d5-4220-b003-8427e605e2e2
 md"
-Le code de la phase 3 n'a pas beaucoup modifié. 
-Seul l'algorithme de calcul des arêtes adjacentes à été modifié légerement pour tenir compte du calcul des one-tree. Des accesseuseur et mutateurs ont été rajoutés pour tenir compte des nouveaux algorithmes.
-Les tests ont été mis à jour et tout marche bien.
+Le code de la phase 3 n'a pas beaucoup été modifié. 
+
+L'algorithme de calcul des listes d'adjacence des arêtes à été légerement améliorer pour gérer plus facilement les 1-trees dans l'algorithme de Held et Karp (HK).
+
+Un mutateur de l'attribut `weight`de la structure `Edge` à été ajouté pour tenir compte des nouveaux algorithmes de tournées minimales.
+
+Les tests des différentes structures modifiées ont été mis à jour.
 "
 
 # ╔═╡ 30506e17-5439-4a46-83e2-1675c58fdc7b
@@ -58,47 +61,56 @@ md" Tests des structures de base (**`Node`**, **`Edge`** et **`Graph`**):
 
 # ╔═╡ 625abad4-23c2-47e3-bcd2-58ccc5b931e4
 with_terminal() do
-	run_test_node()
-	run_test_edge()
-	run_test_graph()
+    run_test_node()
+    run_test_edge()
+    run_test_graph()
 end
 
 # ╔═╡ 977979e5-5096-4c3c-83f0-5df1039baaa1
-md" Tests des algorithmes de recouvrements et des structures associées:
+md" Tests des algorithmes de calcul des arbres de recouvrement minimaux et des structures associées:
 "
 
 # ╔═╡ 70e570af-e89a-4842-85e3-899c1319af21
 with_terminal() do
-	run_test_connected_components()
-	run_test_kruskal()
-	run_test_prim()
+    run_test_connected_components()
+    run_test_kruskal()
+    run_test_prim()
 end
 
 # ╔═╡ 8548f832-e57e-497c-99ff-fce9c10146de
 md"
-## Algorithme RSL
+## Algorithme de Rosenkrantz, Stearns et Lewis (RSL)
 "
 
 # ╔═╡ b5906773-9f41-4124-a1c1-e61881b9f0b8
 md"
-L'algorithme RSL implémenté. 
-L'implémentation utilise les resultats de l'algorithme de recouvrement.
-Des fonctions pour vérifier l'inegalité triangulaire et d'afficher le graph ont é`té ajoutés.
-La plupart des instances de tsp ne respectent pas l'inégalité triangulaires.
-Une optimisation pour le noeud source a été fait mais l'impact est minimal
-L'algorithme a été testé sur l'exemple du cours et il donne un résultat correct.
-L'exécution est rapide mais les résultats sont trés imprécises
-Les resultats sur les instance TSP sont présentés dans le programme prinicipal.
-"
+L'algorithme RSL a été implémenté dans la fonction `rsl`.
+L'implémentation utilise directement les résultats des algorithmes de calcul des arbres de recouvrement minimaux. 
+La fonction `rsl` prends en entrée deux arguments: le graphe et le noeud racine (optionnel).
 
-# ╔═╡ a493d5c3-a0c1-4b14-adbf-e11f61930e29
-md"
-Tests algorithme RSL et fonctions associées.
+L'algorithme de Prim retourne en sortie maintenant l'arbre de recouvrement (MST) et les noeuds du MST en préordre. 
+L'approximation de la tournée minimale est obtenue en connectant les noeuds du MST directement.
+
+La fonction `check_triangular_inequality` permet de vérifier si la fonction de coût des arêtes d'un graphe respecte l'inégalité triangulaire.
+L'exécution de la fonction est un peu lente. Mais la plupart des intances de fichiers `stsp` ne respectent pas l'inégalité triangulaire.
+
+La fonction `plot_tsp_rsl_solution` permet de représenter graphiquement l'approximation de la tournée minimale. Seules les instances où les coordonnées des noeuds sont fournies peuvent être représentées sur une figure.
+
+L'algorithme a été testé sur les différentes instances du projet. L'ensemble des résultats se retrouve à la dernière section de ce rapport.
+
+L'exécution est rapide mais la plupart des résultats sont trés imprécis (exemple de l'instance `brg180.tsp`).
+
+Même en changeant le noeud racine, les résultats changent très peu (voir la deuxième fonction `rsl`).
 "
 
 # ╔═╡ 78fa6007-77fc-401a-b5ae-066a851ae204
 md"
-Exemple de solution TSP
+#### Exemple de solutions TSP obtenues avec l'algorithme RSL
+"
+
+# ╔═╡ 03390321-3131-4383-9c78-f3310ccf6fbc
+md"
+
 "
 
 # ╔═╡ 67ee073f-d3e6-44cd-8ac1-a3623905f991
@@ -127,25 +139,67 @@ md"
 "
 
 # ╔═╡ 211b3c56-2f14-4262-ae03-d0cefe8693b4
- with_terminal() do
-	function main()
-		showgraph = false;
-		plotgraph = false;
-		for (root, dirs, files) in walkdir("../../instances/stsp/")
-			for file in files
-				# Lecture et stockage du graph
-				graph = stsp_to_graph(joinpath(root, file);show_graph_flag=showgraph,plot_graph_flag=plotgraph);
-				# Arbre de recouvrement minimal du graph
-				print("Arbre de recouvrement minimal : ")
-				mst_kruskal = kruskal(graph);
-				print("$(weight_mst(mst_kruskal)) (Kruskal) ");
-				mst_prim = prim(graph);
-				println("$(weight_mst(mst_prim)) (Prim) -v");
-			end
-		end
+with_terminal() do
+	
+    function run_tsp_instance(instance;
+        rsl_flag = true, index_node_source = 1, rsl_check_triangular_ineq = false,
+        hkl_flag = true, hk_mst_alg = "PRIM", hk_step = 1, hk_n_iterations = 100, hk_verbose = false
+    )
+        # Lecture et stockage du graph
+        filename = basename(instance)[1:end-4]
+        graph = stsp_to_graph(instance)
+        nodes_ = nodes(graph)
+        node_source = nodes_[index_node_source]
+        # Arbre de recouvrement minimal du graph
+        println("Arbre de recouvrement minimal : -v")
+        mst_kruskal = kruskal(graph)
+        println("\tKruskl : $(weight_mst(mst_kruskal))")
+        mst_prim, _ = prim(graph)
+        println("\tPrim : $(weight_mst(mst_prim))")
+        # Cycle Hamiltonien
+        println("TSP solution: -v")
+        optimal = get_tsp_optimal_solution(filename)
+        println("\tOptimal cycle = $optimal")
+        # RSL
+        if rsl_flag
+            printf("\tRSL algorithm:\n")
+            if rsl_check_triangular_ineq
+                tri_ineq = check_triangular_inequality(graph)
+                printf("\t\tTriangular inequality :%s\n", tri_ineq)
+            end
+            # Calcul de la solution
+            rsl_cycle, rsl_nodes_cycle = rsl(graph; node_source = node_source)
+            rsl_cycle_weight = weight_cycle(rsl_cycle)
+            error_rsl = compute_relative_error(rsl_cycle_weight, optimal)
+            check_ineq_rsl = rsl_cycle_weight <= 2 * optimal
+            printf("\t\tRSL cycle weight = %d\n\t\tRelative Error = %.2f%%\n\t\t %d ≤ 2×%d (%s)\n", rsl_cycle_weight, 100 * error_rsl, rsl_cycle_weight, optimal, check_ineq_rsl)
+            # Affichage de la solution rsl
+            plot_tsp_rsl_solution(instance, rsl_nodes_cycle)
+        end
+        if hkl_flag
+            printf("\tHK algorithm:\n")
+            # Calcul de la solution
+            hk_one_tree, W_hk = hk(graph; node_source = node_source, mst_alg = hk_mst_alg, step = hk_step, n_iterations = hk_n_iterations, verbose = hk_verbose)
+            error_hk = compute_relative_error(W_hk, optimal)
+            printf("\t\tHK cycle weight = %d\n\t\tRelative Error = %.2f%%\n", W_hk, 100 * error_hk)
+            # Affichage de la solution HK
+            plot_tsp_hk_solution(instance, hk_one_tree)
+        end
+    end
 
-	end
-	main()
+    """ Programme principal. """
+    function main()
+        showgraph = false
+        plotgraph = true
+        for (root, dirs, files) in walkdir("../../instances/stsp/")
+            for file in files
+                # Lecture et stockage du graph
+                filepath = joinpath(root, file)
+                run_tsp_instance(filepath)
+            end
+        end
+    end
+    main()
 end
 
 # ╔═╡ 4324b595-eaef-4698-bf63-dc6bccdb0501
@@ -159,6 +213,7 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [compat]
 Plots = "~1.23.6"
@@ -1050,13 +1105,13 @@ version = "0.9.1+5"
 # ╟─7bdb3277-61ac-4829-8767-2f6d10c55e6d
 # ╟─97b1d9f4-45d5-4220-b003-8427e605e2e2
 # ╟─30506e17-5439-4a46-83e2-1675c58fdc7b
-# ╠═625abad4-23c2-47e3-bcd2-58ccc5b931e4
+# ╟─625abad4-23c2-47e3-bcd2-58ccc5b931e4
 # ╟─977979e5-5096-4c3c-83f0-5df1039baaa1
 # ╟─70e570af-e89a-4842-85e3-899c1319af21
 # ╟─8548f832-e57e-497c-99ff-fce9c10146de
 # ╟─b5906773-9f41-4124-a1c1-e61881b9f0b8
-# ╟─a493d5c3-a0c1-4b14-adbf-e11f61930e29
-# ╠═78fa6007-77fc-401a-b5ae-066a851ae204
+# ╟─78fa6007-77fc-401a-b5ae-066a851ae204
+# ╠═03390321-3131-4383-9c78-f3310ccf6fbc
 # ╟─67ee073f-d3e6-44cd-8ac1-a3623905f991
 # ╟─8733c9e2-112b-4830-b5d3-a6c87ace5f0a
 # ╟─f8b4651c-37dc-4e8f-8139-8da10e0e6464
