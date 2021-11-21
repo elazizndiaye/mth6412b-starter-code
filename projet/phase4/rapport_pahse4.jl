@@ -8,6 +8,7 @@ using InteractiveUtils
 begin
     using PlutoUI
     using Plots
+	using Printf
     include("node.jl")
     include("edge.jl")
     include("read_stsp.jl")
@@ -105,12 +106,22 @@ Même en changeant le noeud racine, les résultats changent très peu (voir la d
 
 # ╔═╡ 78fa6007-77fc-401a-b5ae-066a851ae204
 md"
-#### Exemple de solutions TSP obtenues avec l'algorithme RSL
+### Exemple de solutions TSP obtenues avec l'algorithme RSL
 "
 
 # ╔═╡ 03390321-3131-4383-9c78-f3310ccf6fbc
 md"
+#### Instance `bayg29.tsp`
+* Taille de la Solution Optimale: ``1610``
+* Taille de la Solution RSL: ``2541``
+* Erreur relative: ``57.83\%``
+* Test de l'inégalité triangulaire: True
+* Vérification de l'inégalité ``tsp(RSL)\leq 2\times tsp(Optimal)``: ``2541\leq2\times 1610`` (True)
+"
 
+# ╔═╡ e7f36d45-0fe5-40f8-8ee2-996aed6f99b5
+md"
+![RSL bayg29 basic solution](/images/RSL_bayg29.png)
 "
 
 # ╔═╡ 67ee073f-d3e6-44cd-8ac1-a3623905f991
@@ -162,26 +173,26 @@ with_terminal() do
         println("\tOptimal cycle = $optimal")
         # RSL
         if rsl_flag
-            printf("\tRSL algorithm:\n")
+            @printf("\tRSL algorithm:\n")
             if rsl_check_triangular_ineq
                 tri_ineq = check_triangular_inequality(graph)
-                printf("\t\tTriangular inequality :%s\n", tri_ineq)
+                @printf("\t\tTriangular inequality :%s\n", tri_ineq)
             end
             # Calcul de la solution
             rsl_cycle, rsl_nodes_cycle = rsl(graph; node_source = node_source)
             rsl_cycle_weight = weight_cycle(rsl_cycle)
             error_rsl = compute_relative_error(rsl_cycle_weight, optimal)
             check_ineq_rsl = rsl_cycle_weight <= 2 * optimal
-            printf("\t\tRSL cycle weight = %d\n\t\tRelative Error = %.2f%%\n\t\t %d ≤ 2×%d (%s)\n", rsl_cycle_weight, 100 * error_rsl, rsl_cycle_weight, optimal, check_ineq_rsl)
+            @printf("\t\tRSL cycle weight = %d\n\t\tRelative Error = %.2f%%\n\t\t %d ≤ 2×%d (%s)\n", rsl_cycle_weight, 100 * error_rsl, rsl_cycle_weight, optimal, check_ineq_rsl)
             # Affichage de la solution rsl
             plot_tsp_rsl_solution(instance, rsl_nodes_cycle)
         end
         if hkl_flag
-            printf("\tHK algorithm:\n")
+            @printf("\tHK algorithm:\n")
             # Calcul de la solution
             hk_one_tree, W_hk = hk(graph; node_source = node_source, mst_alg = hk_mst_alg, step = hk_step, n_iterations = hk_n_iterations, verbose = hk_verbose)
             error_hk = compute_relative_error(W_hk, optimal)
-            printf("\t\tHK cycle weight = %d\n\t\tRelative Error = %.2f%%\n", W_hk, 100 * error_hk)
+            @printf("\t\tHK cycle weight = %d\n\t\tRelative Error = %.2f%%\n", W_hk, 100 * error_hk)
             # Affichage de la solution HK
             plot_tsp_hk_solution(instance, hk_one_tree)
         end
@@ -1111,7 +1122,8 @@ version = "0.9.1+5"
 # ╟─8548f832-e57e-497c-99ff-fce9c10146de
 # ╟─b5906773-9f41-4124-a1c1-e61881b9f0b8
 # ╟─78fa6007-77fc-401a-b5ae-066a851ae204
-# ╠═03390321-3131-4383-9c78-f3310ccf6fbc
+# ╟─03390321-3131-4383-9c78-f3310ccf6fbc
+# ╠═e7f36d45-0fe5-40f8-8ee2-996aed6f99b5
 # ╟─67ee073f-d3e6-44cd-8ac1-a3623905f991
 # ╟─8733c9e2-112b-4830-b5d3-a6c87ace5f0a
 # ╟─f8b4651c-37dc-4e8f-8139-8da10e0e6464
