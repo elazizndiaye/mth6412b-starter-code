@@ -89,11 +89,11 @@ L'algorithme RSL a été implémenté dans la fonction `rsl`.
 L'implémentation utilise directement les résultats des algorithmes de calcul des arbres de recouvrement minimaux. 
 La fonction `rsl` prends en entrée deux arguments: le graphe et le noeud racine (optionnel).
 
-L'algorithme de Prim retourne en sortie maintenant l'arbre de recouvrement (MST) et les noeuds du MST en préordre. 
+L'algorithme de Prim retourne maintenant en sortie l'arbre de recouvrement (MST) et les noeuds du MST en préordre. 
 L'approximation de la tournée minimale est obtenue en connectant les noeuds du MST directement.
 
 La fonction `check_triangular_inequality` permet de vérifier si la fonction de coût des arêtes d'un graphe respecte l'inégalité triangulaire.
-L'exécution de la fonction est un peu lente. Mais la plupart des intances de fichiers `stsp` ne respectent pas l'inégalité triangulaire.
+L'exécution de la fonction est un peu lente. Mais globalement, la plupart des intances de fichiers `stsp` ne respectent pas l'inégalité triangulaire.
 
 La fonction `plot_tsp_rsl_solution` permet de représenter graphiquement l'approximation de la tournée minimale. Seules les instances où les coordonnées des noeuds sont fournies peuvent être représentées sur une figure.
 
@@ -116,7 +116,7 @@ md"
 * Taille de la Solution RSL: ``2541``
 * Erreur relative: ``57.83\%``
 * Test de l'inégalité triangulaire: True
-* Vérification de l'inégalité ``tsp(RSL)\leq 2\times tsp(Optimal)``: ``2541\leq2\times 1610`` (True)
+* Vérification de l'inégalité ``tsp_{RSL}\leq 2\times tsp_{Optimal}`` : ``2541\leq2\times 1610`` (True)
 
 La solution RSL est représenté sur la figure ci-dessous:
 "
@@ -128,36 +128,148 @@ md"""
 
 # ╔═╡ aded80a1-e412-4a85-878a-30369abd5ef1
 md"
-En variant le noeud source et en gardant la solution tsp qui a la plus faible erreur relative, on peut obtenir une solution TSP de taille ``2493`` et d'erreur relative ``54.84\%``. 
+En variant le noeud source et en gardant la solution tsp qui possède la plus faible erreur relative, on peut obtenir une solution TSP de taille ``2493`` et d'erreur relative ``54.84\%``. 
 On remarque ainsi que l'amélioration est très faible.
 
-La solution optimisé est représenté sur la figure ci-dessous:
+La solution optimisée est représentée sur la figure ci-dessous:
+
 ![RSL bayg29 optim solution](https://raw.githubusercontent.com/elazizndiaye/mth6412b-starter-code/phase4/projet/phase4/images/RSL_bayg29_optim.png)
+"
+
+# ╔═╡ 9db0a6ed-823b-4c4a-aa73-13fedba95b4b
+md"
+#### Instance `pa561.tsp`
+* Taille de la Solution Optimale: ``2763``
+* Taille de la Solution RSL: ``6569``
+* Erreur relative: ``137.75\%``
+* Test de l'inégalité triangulaire: False
+* Vérification de l'inégalité ``tsp_{RSL}\leq 2\times tsp_{Optimal}`` : ``6569\leq2\times 2763`` (False)
+
+La solution RSL est représenté sur la figure ci-dessous:
+
+![RSL pa561 solution](https://raw.githubusercontent.com/elazizndiaye/mth6412b-starter-code/phase4/projet/phase4/images/RSL_pa561.png)
+"
+
+# ╔═╡ 3960d55a-7f21-48a3-a737-3c583049c459
+md"
+#### Instance `brg180.tsp`
+* Taille de la Solution Optimale: ``1950``
+* Taille de la Solution RSL: ``259290``
+* Erreur relative: ``13196.92\%``
+* Test de l'inégalité triangulaire: False
+* Vérification de l'inégalité ``tsp_{RSL}\leq 2\times tsp_{Optimal}`` : ``259290\times 1950`` (False)
+On remarque ainsi que l'approximation de la tournée minimale peut être très mauvaise lorsque l'inégalité triangulaire n'est pas respectée.
 "
 
 # ╔═╡ 67ee073f-d3e6-44cd-8ac1-a3623905f991
 md"
-## Algorithme HK
+## Algorithme de Held et Karp (HK)
 "
 
 # ╔═╡ 8733c9e2-112b-4830-b5d3-a6c87ace5f0a
 md"
-L'algorithme RSL implémenté. 
-L'implémentation utilise l'algorithme décrits dans la référence du cours.
-Une optimisation pour les différents paramètres mais l'impacxt est souvent minime
-L'algorithme a été testé sur l'exemple du cours et il donne un résultat correct.
-L'exécution est plus lente mais les résultats sont plus précis
-Les resultats sur les instance TSP sont présentés dans le programme prinicipal.
+L'algorithme RSL a été implémenté dans la fonction `hk`.
+L'implémentation utilise directement [l'algorithme](https://moodle.polymtl.ca/pluginfile.php/89847/mod_folder/content/0/LKH_REPORT.pdf?forcedownload=1) décrit dans la référence du projet. 
+La fonction `hk` prends en entrée le graphe et plusieurs paramètres optionnels.
+Les paramètres optionnels sont:
+* Le noeud racine.
+* L'algorithme de calcul de L'arbre de recouvrement minimal (PRIM ou KRUSKAL)
+* La longueur de pas
+* Le nombre d'itérations
+* Une variable booléenne pour l'affichage des résultats sur le console
+
+L'exécution de l'algorithme s'arrête lorsqu'une tournée minimiale est trouvée ou lorsque le nombre maximal d'itérations est atteint. Le 1_tree ainsi que la borne inférieur de la taille de la tournée minimale sont retournées en sortie.
+
+La fonction `plot_tsp_hk_solution` permet de représenter graphiquement l'approximation de la tournée minimale. Seules les instances où les coordonnées des noeuds sont fournies peuvent être représentées sur une figure.
+
+L'algorithme a été testé sur les différentes instances du projet. L'ensemble des résultats se retrouve à la dernière section de ce rapport.
+
+L'exécution de l'algorithme HK est plus lente que l'éxécution de L'algorithme RSL mais la plupart des résultats sont trés précis.
+
+L'algorithme HK donne des résultats précis même dans les cas où l'inégalité traingulaire n'est pas respectée (exemple de l'instance `brg180.tsp`).
+
+Enfin, l'algorithme HK, comparé à l'algorithme RSL, semble être plus sensible aux paramètres d'entrées (exemple de l'instance `brazil58.tsp`).
 "
 
 # ╔═╡ f8b4651c-37dc-4e8f-8139-8da10e0e6464
 md"
-Test de l'algorithme HK
+### Exemple de solutions TSP obtenues avec l'algorithme HK
+"
+
+# ╔═╡ 1a07bb46-4e55-4c20-be75-8465f079514a
+md"
+#### Instance `bayg29.tsp`
+* Taille de la Solution Optimale: ``1610``
+* Taille de la Solution HK: ``1607``
+* Erreur relative: ``0.19\%``
+* Noeud racine: noeud d'index ``5``
+* Longeur de pas: ``1.0``
+* Nombre d'itérations: 200
+* Algorithme MST: Prim
+
+La solution HK est représenté sur la figure ci-dessous:
+
+![HK bayg29 solution](https://raw.githubusercontent.com/elazizndiaye/mth6412b-starter-code/phase4/projet/phase4/images/HK_bayg29.png)
+"
+
+# ╔═╡ b6a65db4-1547-4c93-8d6e-1f7b98507971
+md"
+#### Instance `pa561.tsp`
+* Taille de la Solution Optimale: ``2763``
+* Taille de la Solution HK: ``2630``
+* Erreur relative: ``4.81\%``
+* Noeud racine: noeud d'index ``258``
+* Longeur de pas: ``1.0``
+* Nombre d'itérations: 500
+* Algorithme MST: Kruskal
+
+La solution HK est représenté sur la figure ci-dessous:
+
+![HK pa561 solution](https://raw.githubusercontent.com/elazizndiaye/mth6412b-starter-code/phase4/projet/phase4/images/HK_pa561.png)
+"
+
+# ╔═╡ 4c4200eb-9e49-41c7-8187-f26d503c31e1
+md"
+#### Instance `brg180.tsp`
+* Taille de la Solution Optimale: ``1950``
+* Taille de la Solution HK: ``1940``
+* Erreur relative: ``0.51\%``
+* Nombre d'itérations: 100
+* Algorithme MST: PRIM
+"
+
+# ╔═╡ 1ead573f-7dc1-415b-a881-206ebfb7fa06
+md"
+#### Instance `brazil58.tsp`
+* Cas 1
+  * Taille de la Solution Optimale: ``25395``
+  * Taille de la Solution HK: ``19740``
+  * Erreur relative: ``22.27\%``
+  * Noeud racine: noeud d'index ``1``
+  * Nombre d'itérations: ``100``
+  * Algorithme MST: PRIM
+* Cas 2
+  * Taille de la Solution Optimale: ``25395``
+  * Taille de la Solution HK: ``25354``
+  * Erreur relative: ``0.16\%``
+  * Noeud racine: noeud d'index ``32``
+  * Nombre d'itérations: ``15000``
+  * Algorithme MST: KRUSKAL
 "
 
 # ╔═╡ e27585a6-2110-4ec1-b65f-5edd2222c160
 md"
 ## Programme principal
+"
+
+# ╔═╡ d0a22a3a-5a70-4249-b5e8-2ed29a9126de
+md"
+La fonction *main* permet de lire l'ensemble des fichiers contenus dans le repertoire `instances/stsp/`. Pour chaque fichier, on construit le graphe correspondant et on calcule les arbres de recouvrement minimaux avec les algorithmes de Kruskal et de Prim. Ensuite les tournées minimales sont calculées avec l'algorithme RSL et HK.
+Les valeurs par défaut des paramètres des différents algorithmes sont utilisées dans toutes les instances.
+
+La fonction `run_tsp_instance` permet d'éxécuter une instance en particulier avec des paramètres spécifiés en entrée.
+
+### Résultats du programme principal:
 "
 
 # ╔═╡ 211b3c56-2f14-4262-ae03-d0cefe8693b4
@@ -226,8 +338,29 @@ end
 
 # ╔═╡ 4324b595-eaef-4698-bf63-dc6bccdb0501
 md"
-## Résumé des résultats
-Tableau
+### Résumé des résultats
+"
+
+# ╔═╡ d0af11eb-5077-4797-8400-58eb4360235a
+md"
+
+| Instance  | Taille Optimale | Taille RSL (erreur) | Taille HK (erreur) |
+| :-------  | :------------:  | :-----------------: | :----------------: |
+| bayg29    | 1610            | 2541   (57.83%)     | 1607  (0.19%)      |
+| bays29    | 2020            | 3635   (79.95%)     | 2006  (0.69%)      |
+| brazil58  | 25395           | 38939  (53.33%)     | 19740 (22.27%)     |
+| brg180    | 1950            | 259290 (13196.92%)  | 1940  (0.51%)      |
+| dantzig42 | 699             | 967    (38.34%)     | 688   (1.57%)      |
+| fri26     | 937             | 1400   (49.41%)     | 935   (0.21%)      |
+| gr120     | 6942            | 15943  (129.66%)    | 6781  (2.32%)      |
+| gr17      | 2085            | 2981   (42.97%)     | 1880  (9.83%)      |
+| gr21      | 2707            | 4208   (55.45%)     | 2607  (3.69%)      |
+| gr24      | 1272            | 2019   (58.73%)     | 1270  (0.16%)      |
+| gr48      | 5046            | 10983  (117.66%)    | 4823  (4.42%)      |
+| hk48      | 11461           | 18688  (63.06%)     | 11142 (2.78%)      |
+| pa561     | 2763            | 6569   (137.75%)    | 2623  (5.07%)      |
+| swiss42   | 1273            | 2001   (57.19%)     | 1269  (0.31%)      |
+
 "
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1134,13 +1267,21 @@ version = "0.9.1+5"
 # ╟─b5906773-9f41-4124-a1c1-e61881b9f0b8
 # ╟─78fa6007-77fc-401a-b5ae-066a851ae204
 # ╟─03390321-3131-4383-9c78-f3310ccf6fbc
-# ╠═e7f36d45-0fe5-40f8-8ee2-996aed6f99b5
-# ╠═aded80a1-e412-4a85-878a-30369abd5ef1
+# ╟─e7f36d45-0fe5-40f8-8ee2-996aed6f99b5
+# ╟─aded80a1-e412-4a85-878a-30369abd5ef1
+# ╟─9db0a6ed-823b-4c4a-aa73-13fedba95b4b
+# ╟─3960d55a-7f21-48a3-a737-3c583049c459
 # ╟─67ee073f-d3e6-44cd-8ac1-a3623905f991
 # ╟─8733c9e2-112b-4830-b5d3-a6c87ace5f0a
 # ╟─f8b4651c-37dc-4e8f-8139-8da10e0e6464
+# ╟─1a07bb46-4e55-4c20-be75-8465f079514a
+# ╟─b6a65db4-1547-4c93-8d6e-1f7b98507971
+# ╟─4c4200eb-9e49-41c7-8187-f26d503c31e1
+# ╟─1ead573f-7dc1-415b-a881-206ebfb7fa06
 # ╟─e27585a6-2110-4ec1-b65f-5edd2222c160
+# ╟─d0a22a3a-5a70-4249-b5e8-2ed29a9126de
 # ╟─211b3c56-2f14-4262-ae03-d0cefe8693b4
-# ╠═4324b595-eaef-4698-bf63-dc6bccdb0501
+# ╟─4324b595-eaef-4698-bf63-dc6bccdb0501
+# ╟─d0af11eb-5077-4797-8400-58eb4360235a
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
