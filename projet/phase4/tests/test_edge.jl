@@ -17,6 +17,12 @@ function run_test_edge()
     @test end_node(edge1) == node1;
     @test weight(edge1) == poids;
 
+    # Mutateurs
+    poids2 = 13.0
+    set_weight!(edge1,poids2);
+    @test weight(edge1)!=poids
+    @test weight(edge1)==poids2
+
     # Opérateurs de comparaison
     node3 = Node("c", 3);
     edge2 = Edge{Int,Float64}("E2", node2, node3, 50.0);
