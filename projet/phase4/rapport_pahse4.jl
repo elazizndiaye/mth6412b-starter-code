@@ -117,11 +117,22 @@ md"
 * Erreur relative: ``57.83\%``
 * Test de l'inégalité triangulaire: True
 * Vérification de l'inégalité ``tsp(RSL)\leq 2\times tsp(Optimal)``: ``2541\leq2\times 1610`` (True)
+
+La solution RSL est représenté sur la figure ci-dessous:
 "
 
 # ╔═╡ e7f36d45-0fe5-40f8-8ee2-996aed6f99b5
+md"""
+![RSL bayg29 basic solution](https://raw.githubusercontent.com/elazizndiaye/mth6412b-starter-code/phase4/projet/phase4/images/RSL_bayg29.png)
+"""
+
+# ╔═╡ aded80a1-e412-4a85-878a-30369abd5ef1
 md"
-![RSL bayg29 basic solution](/images/RSL_bayg29.png)
+En variant le noeud source et en gardant la solution tsp qui a la plus faible erreur relative, on peut obtenir une solution TSP de taille ``2493`` et d'erreur relative ``54.84\%``. 
+On remarque ainsi que l'amélioration est très faible.
+
+La solution optimisé est représenté sur la figure ci-dessous:
+![RSL bayg29 optim solution](https://raw.githubusercontent.com/elazizndiaye/mth6412b-starter-code/phase4/projet/phase4/images/RSL_bayg29_optim.png)
 "
 
 # ╔═╡ 67ee073f-d3e6-44cd-8ac1-a3623905f991
@@ -1124,6 +1135,7 @@ version = "0.9.1+5"
 # ╟─78fa6007-77fc-401a-b5ae-066a851ae204
 # ╟─03390321-3131-4383-9c78-f3310ccf6fbc
 # ╠═e7f36d45-0fe5-40f8-8ee2-996aed6f99b5
+# ╠═aded80a1-e412-4a85-878a-30369abd5ef1
 # ╟─67ee073f-d3e6-44cd-8ac1-a3623905f991
 # ╟─8733c9e2-112b-4830-b5d3-a6c87ace5f0a
 # ╟─f8b4651c-37dc-4e8f-8139-8da10e0e6464
