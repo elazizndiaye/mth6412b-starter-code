@@ -77,22 +77,27 @@ end
 function rsl_reconstruct_image(instance_tsp::String, instance_shuffled::String; index_node_source = 1)
     image_name = basename(instance_tsp)[1:end-4]
     graph = stsp_to_graph(instance_tsp)
+    adjust_graph_weight!(graph)
     nodes_ = nodes(graph)
     node_source = nodes_[index_node_source]
     rsl_cycle, rsl_nodes_cycle = rsl(graph; node_source = node_source)
     rsl_cycle_weight = weight_cycle(rsl_cycle)
     # Ecriture de la tournée
     tour = rsl_tour(rsl_nodes_cycle)
-    println(tour)
+    inv_tour = inverse_tour(tour)
     tour_file = "./projet/phase5/reconstructed_images/tours/$image_name.tour"
+    inv_tour_file = "./projet/phase5/reconstructed_images/tours/$image_name.inv.tour"
     image_file = "./projet/phase5/reconstructed_images/images/$image_name.png"
+    inv_image_file = "./projet/phase5/reconstructed_images/images/$image_name.inv.png"
     write_tour(tour_file, tour, Float32(rsl_cycle_weight))
+    write_tour(inv_tour_file, inv_tour, Float32(rsl_cycle_weight))
     reconstruct_picture(tour_file, instance_shuffled, image_file; view = true)
+    reconstruct_picture(inv_tour_file, instance_shuffled, inv_image_file; view = true)
 end
 
 instance_tsp = "./shredder-julia/tsp/instances/alaska-railroad.tsp"
 instance_shuffled = "./shredder-julia/images/shuffled/alaska-railroad.png"
-rsl_reconstruct_image(instance_tsp, instance_shuffled; index_node_source = 1)
+rsl_reconstruct_image(instance_tsp, instance_shuffled; index_node_source = 56)
 
 # Executer toutes les instances
 #main()
