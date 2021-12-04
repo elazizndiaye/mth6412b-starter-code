@@ -18,6 +18,7 @@ function hk(graph::AbstractGraph; node_source = nothing, mst_alg = "PRIM", step 
         @printf("n_iterations (%d) - mst_algorithm (%s) - step size (%.1f) - node source (%d)\n", n_iterations, mst_alg, step, data(node_source))
         @printf("Iteration\tMean(v)\t\tWeight_Iteration\tMax_Weight\n")
     end
+    optimal_found = false
     min_one_tree = nothing
     while k < n_iterations
         sub_graph = deepcopy(sub_graph_init)
@@ -28,7 +29,10 @@ function hk(graph::AbstractGraph; node_source = nothing, mst_alg = "PRIM", step 
         v_k = node_degrees(min_one_tree, n_nodes) .- 2
         if all(v_k .== 0)
             # Optimal value found
-            return min_one_tree, W
+            optimal_found = true
+            tour_egdes = min_one_tree
+            _, tour_nodes = one_tree_to_tour(graph, sub_graph, pi_k, node_source)
+            return min_one_tree, W, optimal_found, tour_egdes, tour_nodes
         end
         pi_k = pi_k .+ step * v_k
         k = k + 1
@@ -36,7 +40,9 @@ function hk(graph::AbstractGraph; node_source = nothing, mst_alg = "PRIM", step 
             @printf("%d\t\t%.1e\t\t%.1f\t\t\t%.1f\n", k, sum(abs.(v_k)) / length(v_k), weight_k, W)
         end
     end
-    return min_one_tree, W
+    sub_graph = deepcopy(sub_graph_init)
+    tour_edges, tour_nodes = one_tree_to_tour(graph, sub_graph, pi_k, node_source)
+    return min_one_tree, W, optimal_found, tour_edges, tour_nodes
 end
 
 """Génére un sous-graphe en retirant un noeud."""
@@ -66,7 +72,7 @@ function generate_sub_graph(graph, node_source)
     return sub_graph, adj_list_node_source
 end
 
-"""Calcule le minimume 1_tree de la graphe en entrée."""
+"""Calcule le minimum 1_tree de la graphe en entrée."""
 function compute_min_tree!(sub_graph, adj_list_node_source, pi_k, node_source, mst_alg)
     edges_ = edges(sub_graph)
     for edge in edges_
@@ -125,4 +131,33 @@ function node_degrees(one_tree, n_nodes::Int)
         d_k[data(end_node(edge))] += 1
     end
     d_k
+end
+
+"""Convertit le minimum 1_tree en tournée."""
+function one_tree_to_tour(graph, sub_graph, pi_k, node_source)
+    edges_ = edges(sub_graph)
+    for edge in edges_
+        weight_edge = weight(edge)
+        pi_k1 = pi_k[data(start_node(edge))]
+        pi_k2 = pi_k[data(end_node(edge))]
+        set_weight!(edge, weight_edge + pi_k1 + pi_k2)
+    end
+    mst, tour_nodes = prim(sub_graph)
+    push!(tour_nodes, node_source)
+    closing_edge = find_edge(graph, tour_nodes[end], tour_nodes[1])
+    weight_edge = weight(closing_edge)
+    pi_k1 = pi_k[data(start_node(closing_edge))]
+    pi_k2 = pi_k[data(end_node(closing_edge))]
+    set_weight!(closing_edge, weight_edge - pi_k1 - pi_k2)
+    tour_edges = typeof(closing_edge)[]
+    push!(tour_edges, closing_edge)
+    for inode = 1:length(tour_nodes)-1
+        edge = find_edge(graph, tour_nodes[inode], tour_nodes[inode+1])
+        weight_edge = weight(edge)
+        pi_k1 = pi_k[data(start_node(edge))]
+        pi_k2 = pi_k[data(end_node(edge))]
+        set_weight!(edge, weight_edge - pi_k1 - pi_k2)
+        push!(tour_edges, edge)
+    end
+    tour_edges, tour_nodes
 end

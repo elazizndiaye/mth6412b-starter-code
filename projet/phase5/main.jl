@@ -16,7 +16,7 @@ include("im_recons.jl")
 """ Lit un fichier tsp et appliques les algorithmes de krusl, Prim, RSL et Held et Karp."""
 function run_tsp_instance(instance;
     rsl_flag = true, index_node_source = 1, rsl_check_triangular_ineq = false,
-    hkl_flag = true, hk_mst_alg = "PRIM", hk_step = 1, hk_n_iterations = 100, hk_verbose = false
+    hk_flag = true, hk_mst_alg = "PRIM", hk_step = 1, hk_n_iterations = 100, hk_verbose = false
 )
     # Lecture et stockage du graph
     filename = basename(instance)[1:end-4]
@@ -49,7 +49,7 @@ function run_tsp_instance(instance;
         # Affichage de la solution rsl
         plot_tsp_rsl_solution(instance, rsl_nodes_cycle)
     end
-    if hkl_flag
+    if hk_flag
         @printf("\tHK algorithm:\n")
         # Calcul de la solution
         hk_one_tree, W_hk = hk(graph; node_source = node_source, mst_alg = hk_mst_alg, step = hk_step, n_iterations = hk_n_iterations, verbose = hk_verbose)
@@ -83,7 +83,7 @@ function rsl_reconstruct_image(instance_tsp::String, instance_shuffled::String; 
     rsl_cycle, rsl_nodes_cycle = rsl(graph; node_source = node_source)
     rsl_cycle_weight = weight_cycle(rsl_cycle)
     # Ecriture de la tournée
-    tour = rsl_tour(rsl_nodes_cycle)
+    tour = nodes_tsp_to_tour(rsl_nodes_cycle)
     inv_tour = inverse_tour(tour)
     tour_file = "./projet/phase5/reconstructed_images/tours/$image_name.tour"
     inv_tour_file = "./projet/phase5/reconstructed_images/tours/$image_name.inv.tour"
@@ -95,9 +95,31 @@ function rsl_reconstruct_image(instance_tsp::String, instance_shuffled::String; 
     reconstruct_picture(inv_tour_file, instance_shuffled, inv_image_file; view = true)
 end
 
+"""Reconstruit une instance en utilisant l'algorithme de HK."""
+function hk_reconstruct_image(instance_tsp::String, instance_shuffled::String; index_node_source = 1, hk_mst_alg = "PRIM", hk_step = 1, hk_n_iterations = 50)
+    image_name = basename(instance_tsp)[1:end-4]
+    graph = stsp_to_graph(instance_tsp)
+    # adjust_graph_weight!(graph)
+    nodes_ = nodes(graph)
+    node_source = nodes_[index_node_source]
+    min_one_tree, W, optimal_found, tour_edges, tour_nodes = hk(graph; node_source = node_source, mst_alg = hk_mst_alg, step = hk_step, n_iterations = hk_n_iterations, verbose = false)
+    # Ecriture de la tournée
+    tour = nodes_tsp_to_tour(tour_nodes)
+    inv_tour = inverse_tour(tour)
+    tour_file = "./projet/phase5/reconstructed_images/tours/$image_name.tour"
+    inv_tour_file = "./projet/phase5/reconstructed_images/tours/$image_name.inv.tour"
+    image_file = "./projet/phase5/reconstructed_images/images/$image_name.png"
+    inv_image_file = "./projet/phase5/reconstructed_images/images/$image_name.inv.png"
+    write_tour(tour_file, tour, Float32(W))
+    write_tour(inv_tour_file, inv_tour, Float32(W))
+    reconstruct_picture(tour_file, instance_shuffled, image_file; view = true)
+    reconstruct_picture(inv_tour_file, instance_shuffled, inv_image_file; view = true)
+end
+
 instance_tsp = "./shredder-julia/tsp/instances/alaska-railroad.tsp"
 instance_shuffled = "./shredder-julia/images/shuffled/alaska-railroad.png"
-rsl_reconstruct_image(instance_tsp, instance_shuffled; index_node_source = 56)
+# rsl_reconstruct_image(instance_tsp, instance_shuffled; index_node_source = 371)
+hk_reconstruct_image(instance_tsp, instance_shuffled; index_node_source = 21,hk_step = 1000,hk_n_iterations=50)
 
 # Executer toutes les instances
 #main()

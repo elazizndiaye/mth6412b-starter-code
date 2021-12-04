@@ -1,7 +1,7 @@
 include("../../shredder-julia/bin/tools.jl")
 
-"""Retourne le vecteur tour obtenu avec l'algorithme RSL."""
-function rsl_tour(nodes_tsp)
+"""Retourne le vecteur tour obtenu avec les algorithmes RSL et HK."""
+function nodes_tsp_to_tour(nodes_tsp)
     tour = Int[]
     index = 1
     for i = 1:length(nodes_tsp)
@@ -19,12 +19,8 @@ function rsl_tour(nodes_tsp)
     tour
 end
 
-"""Retourne le vecteur tour obtenu avec l'algorithme HK."""
-function hk_tour(one_tree)
-    tour = Int[]
-    tour
-end
 
+"""Retourne le vecteur tour inversé (permet de retourner l'image)."""
 function inverse_tour(tour)
     inv_tour = copy(tour)
     inv_tour[1] = 0
