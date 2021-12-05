@@ -35,8 +35,8 @@ function main(; index_to_run = [])
             # Weight HK = 4233817
             instance_tsp = "./shredder-julia/tsp/instances/lower-kananaskis-lake.tsp"
             instance_shuffled = "./shredder-julia/images/shuffled/lower-kananaskis-lake.png"
-            rsl_reconstruct_image(instance_tsp, instance_shuffled; index_node_source = 84, inverse_tour_flag = false)
-            hk_reconstruct_image(instance_tsp, instance_shuffled; index_node_source = 161, hk_step = 600, hk_n_iterations = 20, inverse_tour_flag = true)
+            rsl_reconstruct_image(instance_tsp, instance_shuffled; index_node_source = 84, inverse_tour_flag = true)
+            hk_reconstruct_image(instance_tsp, instance_shuffled; index_node_source = 161, hk_step = 600, hk_n_iterations = 20, inverse_tour_flag = false)
         elseif index == 5 # "marlet2-radio-board"
             # Weight RSL = 9261640
             # Weight HK = 8864812
@@ -77,5 +77,5 @@ function main(; index_to_run = [])
 end
 
 # Executer toutes les instances
-# main(; index_to_run = 3)
-main()
+main(; index_to_run = 4)
+#main()

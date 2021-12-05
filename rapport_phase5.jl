@@ -44,11 +44,11 @@ md"
 # ╔═╡ b1408d5b-0ee1-4764-a2ef-819ae5eebc66
 md"
 ## Révision du code de la phase 4
-Le code de la phase 4 a été entierement repris dans la phase 5.
+Le code de la phase 4 a été entièrement repris dans la phase 5.
 
 L'algorithme de Held et Karp a été légérement modifié pour sortir une tournée à la place d'un 1-tree.
 
-Tests des algorithmes de la phase 4:
+#### Tests des algorithmes de la phase 4
 "
 
 # ╔═╡ 3f34f25f-f441-451e-ac60-16b9761a0c2d
@@ -82,7 +82,7 @@ L'ensemble des résultats ci-dessous peuvent être obtenu en lancant le programm
 
 # ╔═╡ f7884dc4-c187-49fd-9527-18f3908c8e1a
 md"
-### Image _abstract light painting_
+### Abstract light painting
 #### Original 
 "
 
@@ -92,7 +92,7 @@ load("shredder-julia/images/original/abstract-light-painting.png")
 # ╔═╡ 7c320312-2890-415c-a215-ddccd3af346d
 md"
 #### Image reconstruite avec l'algorithme de RSL
-Poids total de la tournée = ``52`` 
+Poids total de la tournée = `12539731`
 "
 
 # ╔═╡ 36d3f77d-3505-4b0a-b6c5-1ffa72df4afc
@@ -101,11 +101,182 @@ load("projet/phase5/reconstructed_images/images/abstract-light-painting.rsl.png"
 # ╔═╡ 7c5f9f7c-f17d-4bc7-8412-ccc34861ecbd
 md"
 #### Image reconstruite avec l'algorithme de HK
-Poids total de la tournée = ``52``
+Poids total de la tournée = `12314767`
 "
 
 # ╔═╡ acc28149-17ef-4059-bee4-ed41f5aa09eb
 load("projet/phase5/reconstructed_images/images/abstract-light-painting.hk.png")
+
+# ╔═╡ c919c166-beff-45af-bc9b-aa5301d2227f
+md"
+### Alaska railroad
+#### Original vs RSL
+Poids total de la tournée RSL = `7978214`
+"
+
+# ╔═╡ c01f23d3-088f-4126-ba3f-cb6aa7fe60d3
+[load("shredder-julia/images/original/alaska-railroad.png") load("projet/phase5/reconstructed_images/images/alaska-railroad.rsl.png")]
+
+# ╔═╡ e37a9e82-8594-428f-ac91-1dc8b16fc0a9
+md"
+#### Original vs HK
+Poids total de la tournée HK = `7667914`
+"
+
+# ╔═╡ c07020b2-166c-4392-9c42-4892b9a6b7a2
+[load("shredder-julia/images/original/alaska-railroad.png") load("projet/phase5/reconstructed_images/images/alaska-railroad.hk.png")]
+
+# ╔═╡ 88f503a6-c71b-47b8-948e-c1a9eaad9622
+md"
+### Blue hour paris
+#### Original vs RSL
+Poids total de la tournée RSL = `4282232`
+"
+
+# ╔═╡ f36fb371-b06a-416c-8c05-16b2a0dafb29
+[load("shredder-julia/images/original/blue-hour-paris.png") load("projet/phase5/reconstructed_images/images/blue-hour-paris.rsl.png")]
+
+# ╔═╡ 3dadd64c-5cd5-4de7-a0c1-f877eaf9dcca
+md"
+#### Original vs HK
+Poids total de la tournée HK = `3946200`
+"
+
+# ╔═╡ a9f24421-e212-4001-bfbf-dbf20261c3f4
+[load("shredder-julia/images/original/blue-hour-paris.png") load("projet/phase5/reconstructed_images/images/blue-hour-paris.hk.png")]
+
+# ╔═╡ bee33b81-8ed5-463e-a709-54b3eb59e372
+md"
+### Lower kananaskis lake
+#### Original vs RSL
+Poids total de la tournée RSL = `4398702`
+"
+
+# ╔═╡ 416f31f9-6c62-4f9d-b96f-d2d23d8f557c
+[load("shredder-julia/images/original/lower-kananaskis-lake.png") load("projet/phase5/reconstructed_images/images/lower-kananaskis-lake.rsl.png")]
+
+# ╔═╡ a044a38a-4f53-45da-b0e6-2b9a0554f211
+md"
+#### Original vs HK
+Poids total de la tournée HK = `4233817`
+"
+
+# ╔═╡ 0bb38528-b587-4c3e-a9de-8cb3b03714fc
+[load("shredder-julia/images/original/lower-kananaskis-lake.png") load("projet/phase5/reconstructed_images/images/lower-kananaskis-lake.hk.png")]
+
+# ╔═╡ d9e829df-91f7-40c5-8125-01f6939fa1f8
+md"
+### Marlet 2 radio board
+#### Original vs RSL
+Poids total de la tournée RSL = `9261640`
+"
+
+# ╔═╡ 8b7b05d6-a113-4395-9905-f793e071c7b0
+[load("shredder-julia/images/original/marlet2-radio-board.png") load("projet/phase5/reconstructed_images/images/marlet2-radio-board.rsl.png")]
+
+# ╔═╡ 6946423f-ffda-43b5-9da3-129d59edced9
+md"
+#### Original vs HK
+Poids total de la tournée HK = `8864812`
+"
+
+# ╔═╡ 40725bdd-5afb-431a-96c4-1df365973250
+[load("shredder-julia/images/original/marlet2-radio-board.png") load("projet/phase5/reconstructed_images/images/marlet2-radio-board.hk.png")]
+
+# ╔═╡ 41ce9587-e264-4a19-bc4d-50cb63b0452e
+md"
+### Nikos cat
+#### Original vs RSL
+Poids total de la tournée RSL = `3375996`
+"
+
+# ╔═╡ 8d13e0e9-9516-4a5b-92ab-b7b3b58c937e
+[load("shredder-julia/images/original/nikos-cat.png") load("projet/phase5/reconstructed_images/images/nikos-cat.rsl.png")]
+
+# ╔═╡ 102741b8-296a-45fd-a4bc-a57bd3e7ba94
+md"
+#### Original vs HK
+Poids total de la tournée HK = `3041738`
+"
+
+# ╔═╡ b930d6fb-820c-40a4-bd37-cc3f28145375
+[load("shredder-julia/images/original/nikos-cat.png") load("projet/phase5/reconstructed_images/images/nikos-cat.hk.png")]
+
+# ╔═╡ 649cda44-413f-45f7-8e67-1baf679848ff
+md"
+### Pizza food wallpaper
+#### Original vs RSL
+Poids total de la tournée RSL = `5283276`
+"
+
+# ╔═╡ ea4314a2-a124-4c87-a5fc-715782c6d74f
+[load("shredder-julia/images/original/pizza-food-wallpaper.png") load("projet/phase5/reconstructed_images/images/pizza-food-wallpaper.rsl.png")]
+
+# ╔═╡ acc5b142-4a94-4e19-995b-a0768b3700d6
+md"
+#### Original vs HK
+Poids total de la tournée HK = `5041336`
+"
+
+# ╔═╡ c3dbd564-02e3-447c-8f93-cb67265497a3
+[load("shredder-julia/images/original/pizza-food-wallpaper.png") load("projet/phase5/reconstructed_images/images/pizza-food-wallpaper.hk.png")]
+
+# ╔═╡ cd9cdd00-f931-41f8-ae57-0f0cf321d369
+md"
+### The enchanted garden
+#### Original vs RSL
+Poids total de la tournée RSL = `20169824`
+"
+
+# ╔═╡ db06ea3d-3a57-4027-9756-2f571e093a6c
+[load("shredder-julia/images/original/the-enchanted-garden.png") load("projet/phase5/reconstructed_images/images/the-enchanted-garden.rsl.png")]
+
+# ╔═╡ 6925d5c5-360f-4a5c-8d37-b0ba82c4b8c5
+md"
+#### Original vs HK
+Poids total de la tournée HK = `19914400`
+"
+
+# ╔═╡ 0970a2be-384a-4160-9934-fd1483a8f472
+[load("shredder-julia/images/original/the-enchanted-garden.png") load("projet/phase5/reconstructed_images/images/the-enchanted-garden.hk.png")]
+
+# ╔═╡ 951cb518-4cff-480d-b96d-0facb7c2d3bd
+md"
+### Tokyo skytree aerial
+#### Original vs RSL
+Poids total de la tournée RSL = `13785352`
+"
+
+# ╔═╡ 92fe1e84-5f62-4532-a37c-d3cb65dbc016
+[load("shredder-julia/images/original/tokyo-skytree-aerial.png") load("projet/phase5/reconstructed_images/images/tokyo-skytree-aerial.rsl.png")]
+
+# ╔═╡ d08f1fb8-f6d6-4e11-8e94-249a1e8888c6
+md"
+#### Original vs HK
+Poids total de la tournée HK = `13610038`
+"
+
+# ╔═╡ 60b4dbb1-4d95-4e0d-a88d-8d639641b8a8
+[load("shredder-julia/images/original/tokyo-skytree-aerial.png") load("projet/phase5/reconstructed_images/images/tokyo-skytree-aerial.hk.png")]
+
+# ╔═╡ 95ab3cff-352b-4457-8a8d-76d92635914a
+md"
+## Résumé des résultats
+
+| Instance                | Taille LKH (fourni)| Taille RSL | Taille HK  |
+| :-----------:           | :------------:     | :------:   | :--------: |
+| abstract light painting | 12314767           | 12539731   | 12314767   |
+| alaska railroad         | 7667914            | 7978214    | 7667914    |
+| blue hour paris         | 3946200            | 4282232    | 3946200    |
+| lower kananaskis lake   | 4226754            | 4398702    | 4233817    |
+| marlet 2 radio board    | 8863246            | 9261640    | 8864812    |
+| nikos cat               | 3036676            | 3375996    | 3041738    |
+| pizza food wallpaper    | 5041336            | 5283276    | 5041336    |
+| the enchanted garden    | 19914400           | 20169824   | 19914400   |
+| tokyo skytree aerial    | 13610038           | 13785352   | 13610038   |
+
+On remarque que la plupart des reconstructions sont très précises.
+"
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1535,10 +1706,43 @@ version = "0.9.1+5"
 # ╟─b4e93a7d-1869-4e27-9007-837db7a9c167
 # ╟─b2984737-4a63-4946-9fe4-b74f0d95eb26
 # ╟─f7884dc4-c187-49fd-9527-18f3908c8e1a
-# ╠═d177b03d-ed3d-445e-894e-7e384f3c086f
+# ╟─d177b03d-ed3d-445e-894e-7e384f3c086f
 # ╟─7c320312-2890-415c-a215-ddccd3af346d
 # ╟─36d3f77d-3505-4b0a-b6c5-1ffa72df4afc
 # ╟─7c5f9f7c-f17d-4bc7-8412-ccc34861ecbd
-# ╠═acc28149-17ef-4059-bee4-ed41f5aa09eb
+# ╟─acc28149-17ef-4059-bee4-ed41f5aa09eb
+# ╟─c919c166-beff-45af-bc9b-aa5301d2227f
+# ╟─c01f23d3-088f-4126-ba3f-cb6aa7fe60d3
+# ╟─e37a9e82-8594-428f-ac91-1dc8b16fc0a9
+# ╟─c07020b2-166c-4392-9c42-4892b9a6b7a2
+# ╟─88f503a6-c71b-47b8-948e-c1a9eaad9622
+# ╟─f36fb371-b06a-416c-8c05-16b2a0dafb29
+# ╟─3dadd64c-5cd5-4de7-a0c1-f877eaf9dcca
+# ╟─a9f24421-e212-4001-bfbf-dbf20261c3f4
+# ╟─bee33b81-8ed5-463e-a709-54b3eb59e372
+# ╟─416f31f9-6c62-4f9d-b96f-d2d23d8f557c
+# ╟─a044a38a-4f53-45da-b0e6-2b9a0554f211
+# ╟─0bb38528-b587-4c3e-a9de-8cb3b03714fc
+# ╟─d9e829df-91f7-40c5-8125-01f6939fa1f8
+# ╟─8b7b05d6-a113-4395-9905-f793e071c7b0
+# ╟─6946423f-ffda-43b5-9da3-129d59edced9
+# ╟─40725bdd-5afb-431a-96c4-1df365973250
+# ╟─41ce9587-e264-4a19-bc4d-50cb63b0452e
+# ╟─8d13e0e9-9516-4a5b-92ab-b7b3b58c937e
+# ╟─102741b8-296a-45fd-a4bc-a57bd3e7ba94
+# ╟─b930d6fb-820c-40a4-bd37-cc3f28145375
+# ╟─649cda44-413f-45f7-8e67-1baf679848ff
+# ╟─ea4314a2-a124-4c87-a5fc-715782c6d74f
+# ╟─acc5b142-4a94-4e19-995b-a0768b3700d6
+# ╟─c3dbd564-02e3-447c-8f93-cb67265497a3
+# ╟─cd9cdd00-f931-41f8-ae57-0f0cf321d369
+# ╟─db06ea3d-3a57-4027-9756-2f571e093a6c
+# ╟─6925d5c5-360f-4a5c-8d37-b0ba82c4b8c5
+# ╟─0970a2be-384a-4160-9934-fd1483a8f472
+# ╟─951cb518-4cff-480d-b96d-0facb7c2d3bd
+# ╟─92fe1e84-5f62-4532-a37c-d3cb65dbc016
+# ╟─d08f1fb8-f6d6-4e11-8e94-249a1e8888c6
+# ╟─60b4dbb1-4d95-4e0d-a88d-8d639641b8a8
+# ╟─95ab3cff-352b-4457-8a8d-76d92635914a
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
