@@ -45,21 +45,43 @@ function adjust_graph_weight!(graph::AbstractGraph)
     graph
 end
 
-# """Reconstruit une instance en utilisant l'algorithme RSL."""
-# function rsl_reconstruct_image(filename::String; index_node_source = 1)
-#     image_name = basename(filename)[1:end-4]
-#     graph = stsp_to_graph(filename)
-#     nodes_ = nodes(graph)
-#     node_source = nodes_[index_node_source]
-#     rsl_cycle, rsl_nodes_cycle = rsl(graph; node_source = node_source)
-#     rsl_cycle_weight = weight_cycle(rsl_cycle)
-#     # Ecriture de la tournée
-#     tour = rsl_tour(rsl_nodes_cycle)
-#     tour_file = "./reconstructed_images/tour/$image_name.tour"
-#     image_file = "./reconstructed_images/tour/$image_name.png"
-#     write_tour(tour_file, tour, rsl_cycle_weight)
-#     reconstruct_picture(tour_file, filename, image_file; view = true)
-# end
+"""Reconstruit une instance en utilisant l'algorithme RSL."""
+function rsl_reconstruct_image(instance_tsp::String, instance_shuffled::String; index_node_source = 1, inverse_tour_flag = false, verbose_flag = false)
+    image_name = basename(instance_tsp)[1:end-4]
+    graph = stsp_to_graph(instance_tsp; verbose_flag = verbose_flag)
+    adjust_graph_weight!(graph)
+    nodes_ = nodes(graph)
+    node_source = nodes_[index_node_source]
+    rsl_cycle, rsl_nodes_cycle = rsl(graph; node_source = node_source)
+    rsl_cycle_weight = weight_cycle(rsl_cycle)
+    # Ecriture de la tournée
+    tour = nodes_tsp_to_tour(rsl_nodes_cycle)
+    if inverse_tour_flag
+        tour = inverse_tour(tour)
+    end
+    tour_file = "projet/phase5/reconstructed_images/tours/$image_name.rsl.tour"
+    image_file = "projet/phase5/reconstructed_images/images/$image_name.rsl.png"
+    write_tour(tour_file, tour, Float32(rsl_cycle_weight))
+    reconstruct_picture(tour_file, instance_shuffled, image_file; view = true)
+    println("Case: $image_name: total tour weight (RSL) = $rsl_cycle_weight")
+end
 
-# instance = "../../shredder-julia/tsp/instances/abstract-light-painting.tsp"
-# rsl_reconstruct_image(instance)
+"""Reconstruit une instance en utilisant l'algorithme de HK."""
+function hk_reconstruct_image(instance_tsp::String, instance_shuffled::String; index_node_source = 1, inverse_tour_flag = false, verbose_flag = false, hk_mst_alg = "PRIM", hk_step = 1, hk_n_iterations = 50)
+    image_name = basename(instance_tsp)[1:end-4]
+    graph = stsp_to_graph(instance_tsp, verbose_flag = verbose_flag)
+    nodes_ = nodes(graph)
+    node_source = nodes_[index_node_source]
+    _, _, _, tour_edges, tour_nodes = hk(graph; node_source = node_source, mst_alg = hk_mst_alg, step = hk_step, n_iterations = hk_n_iterations, verbose = false)
+    hk_cycle_weight = weight_cycle(tour_edges)
+    # Ecriture de la tournée
+    tour = nodes_tsp_to_tour(tour_nodes)
+    if inverse_tour_flag
+        tour = inverse_tour(tour)
+    end
+    tour_file = "./projet/phase5/reconstructed_images/tours/$image_name.hk.tour"
+    image_file = "./projet/phase5/reconstructed_images/images/$image_name.hk.png"
+    write_tour(tour_file, tour, Float32(hk_cycle_weight))
+    reconstruct_picture(tour_file, instance_shuffled, image_file; view = true)
+    println("Case: $image_name: total tour weight (HK) = $hk_cycle_weight")
+end

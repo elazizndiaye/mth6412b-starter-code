@@ -1,10 +1,9 @@
-NAME : ./projet/phase5/reconstructed_images/tours/alaska-railroad.inv.tour
-COMMENT : LENGHT = 7.156297e6
+NAME : projet/phase5/reconstructed_images/tours/alaska-railroad.rsl.tour
+COMMENT : LENGHT = 7.978214e6
 TYPE : TOUR
 DIMENSION : 601
 TOUR_SECTION
 1
-21
 228
 277
 177
@@ -183,6 +182,7 @@ TOUR_SECTION
 388
 398
 4
+21
 424
 378
 81
@@ -216,7 +216,6 @@ TOUR_SECTION
 423
 506
 171
-80
 101
 58
 143
@@ -229,6 +228,7 @@ TOUR_SECTION
 53
 324
 399
+80
 151
 526
 12
